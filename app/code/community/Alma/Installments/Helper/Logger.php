@@ -39,14 +39,14 @@ class Alma_Installments_Helper_Logger extends Mage_Core_Helper_Abstract
         static $logger;
 
         if (!$logger) {
-            $logger = new Logger(Mage::helper('alma/config'));
+            $logger = new AlmaLogger(Mage::helper('alma/config'));
         }
 
         return $logger;
     }
 }
 
-class Logger extends \Psr\Log\AbstractLogger
+class AlmaLogger extends \Psr\Log\AbstractLogger
 {
     /**
      * @var Alma_Installments_Helper_Config
