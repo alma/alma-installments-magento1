@@ -66,13 +66,10 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
 
         switch ($mode) {
             case 'live':
-                $apiKeyType = self::CONFIG_LIVE_API_KEY;
-                break;
+                return $this->getLiveKey();
             default:
-                $apiKeyType = self::CONFIG_TEST_API_KEY;
+                return $this->getTestKey();
         }
-
-        return $this->get($apiKeyType);
     }
 
     public function getLiveKey()
