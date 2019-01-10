@@ -44,8 +44,8 @@
                 <excluded_product_types>virtual,downloadable</excluded_product_types>
                 <excluded_products_message>Virtual and downloadable products aren't eligible</excluded_products_message>
 
-                <live_api_key/>
-                <test_api_key/>
+                <live_api_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <test_api_key backend_model="adminhtml/system_config_backend_encrypted"/>
                 <api_mode>test</api_mode>
 
                 <show_eligibility_message>1</show_eligibility_message>
@@ -75,4 +75,17 @@
             </alma>
         </models>
     </global>
+    <adminhtml>
+        <events>
+            <alma_saved_api_key>
+                <observers>
+                    <alma_observer>
+                        <type>model</type>
+                        <class>alma/observer</class>
+                        <method>handleSavedApiKey</method>
+                    </alma_observer>
+                </observers>
+            </alma_saved_api_key>
+        </events>
+    </adminhtml>
 </config>

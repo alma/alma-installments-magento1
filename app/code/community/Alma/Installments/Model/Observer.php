@@ -23,8 +23,25 @@
  *
  */
 
-class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Abstract
+class Alma_Installments_Model_Observer extends Varien_Event_Observer
 {
-    const CODE = 'alma_installments';
-    protected $_code = self::CODE;
+    /**
+     * @param Varien_Event_Observer $observer
+     */
+    public function handleSavedApiKey($observer)
+    {
+        $map = [
+            'live' => 'test',
+            'test' => 'live'
+        ];
+
+        $modeToTest = $map[$observer->getData('mode')];
+
+        $configPath = 'payment/' .  Alma_Installments_Model_PaymentMethod::CODE  . '/fully_configured';
+        if (Mage::helper('alma/availability')->canConnectToAlma($modeToTest)) {
+            Mage::getConfig()->saveConfig($configPath, 1, 'default', 0);
+        } else {
+            Mage::getConfig()->saveConfig($configPath, 0, 'default', 0);
+        }
+    }
 }
