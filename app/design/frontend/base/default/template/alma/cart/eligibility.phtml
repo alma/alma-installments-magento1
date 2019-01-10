@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -23,18 +22,26 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
--->
 
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/** @var $block Alma_Installments_Block_Eligibility */
+?>
+<?php if ($this->showEligibilityMessage()): ?>
+    <style>
+        .alma-cart-eligibility {
+            margin: 10px 0;
+        }
+
+        .alma-cart-eligibility img {
+            display: inline;
+            vertical-align: middle;
+        }
+    </style>
+    <div class="alma-cart-eligibility">
+        <img src="<?php echo $this->getSkinUrl('alma/images/tiny_logo.png') ?>" alt="Alma">
+        <span class="alma-cart-eligibility--message"><?php echo $this->getEligibilityMessage() ?></span>
+    </div>
+<?php endif; ?>

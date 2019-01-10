@@ -37,6 +37,7 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_TITLE = 'payment/alma_installments/title';
     const CONFIG_DESCRIPTION = 'payment/alma_installments/description';
     const CONFIG_EXCLUDED_PRODUCT_TYPES = 'payment/alma_installments/excluded_product_types';
+    const CONFIG_EXCLUDED_PRODUCTS_MESSAGE = 'payment/alma_installments/excluded_products_message';
 
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
 
@@ -115,6 +116,11 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     public function getExcludedProductTypes()
     {
         return $this->get(self::CONFIG_EXCLUDED_PRODUCT_TYPES);
+    }
+
+    public function getExcludedProductsMessage()
+    {
+        return $this->get(self::CONFIG_EXCLUDED_PRODUCTS_MESSAGE);
     }
 
     public function isFullyConfigured()

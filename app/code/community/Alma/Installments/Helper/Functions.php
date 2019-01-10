@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -23,18 +22,16 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
--->
 
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+class Alma_Installments_Helper_Functions
+{
+    public static function priceFromCents($amount)
+    {
+        return (float)($amount / 100);
+    }
+
+    public static function priceToCents($price)
+    {
+        return (int)(round($price * 100));
+    }
+}

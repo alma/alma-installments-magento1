@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -23,18 +22,37 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
--->
 
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+class Alma_Installments_Model_Data_Address
+{
+    /**
+     * @param Mage_Sales_Model_Quote_Address $address
+     * @return array
+     */
+    public static function dataFromAddress($address)
+    {
+        $data = [];
+        $map = [
+            'first_name' => 'getFirstname',
+            'last_name' => 'getLastname',
+            'company' => 'getCompany',
+            'line1' => 'getStreet1',
+            'line2' => 'getStreet2',
+            'postal_code' => 'getPostcode',
+            'city' => 'getCity',
+            'country' => 'getCountryId',
+            'country' => 'getCountry',
+            'email' => 'getEmail',
+            'phone' => 'getTelephone'
+        ];
+
+        foreach ($map as $attribute => $method) {
+            $callable = [$address, $method];
+            if (is_callable($callable)) {
+                $data[$attribute] = call_user_func_array($callable, []);
+            }
+        }
+
+        return $data;
+    }
+}

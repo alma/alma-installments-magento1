@@ -74,6 +74,14 @@
                 <class>Alma_Installments_Model</class>
             </alma>
         </models>
+        <blocks>
+            <Alma_Installments>
+                <class>Alma_Installments_Block</class>
+            </Alma_Installments>
+            <alma>
+                <class>Alma_Installments_Block</class>
+            </alma>
+        </blocks>
     </global>
     <adminhtml>
         <events>
@@ -88,4 +96,13 @@
             </alma_saved_api_key>
         </events>
     </adminhtml>
+    <frontend>
+        <layout>
+            <updates>
+                <Alma_Installments>
+                    <file>alma_layout.xml</file>
+                </Alma_Installments>
+            </updates>
+        </layout>
+    </frontend>
 </config>

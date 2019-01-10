@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -23,18 +22,48 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
--->
 
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
+{
+    /** @var Alma_Installments_Helper_Eligibility  */
+    private $eligibilityHelper;
+    /** @var Alma_Installments_Helper_Availability  */
+    private $availabilityHelper;
+    /** @var Alma_Installments_Helper_Config */
+    private $config;
+
+    public function __construct(array $args = array())
+    {
+        parent::__construct($args);
+
+        $this->eligibilityHelper = Mage::helper('alma/eligibility');
+        $this->availabilityHelper = Mage::helper('alma/availability');
+        $this->config = Mage::helper('alma/config');
+
+        $this->checkEligibility();
+    }
+
+    public function checkEligibility()
+    {
+        $this->eligibilityHelper->checkEligibility();
+    }
+
+    public function isEligible()
+    {
+        return $this->eligibilityHelper->isEligible();
+    }
+
+    public function showEligibilityMessage()
+    {
+        return $this->shouldDisplay() && $this->config->showEligibilityMessage();
+    }
+
+    public function getEligibilityMessage()
+    {
+        return $this->eligibilityHelper->getMessage();
+    }
+
+    public function shouldDisplay() {
+        return $this->availabilityHelper->isAvailable();
+    }
+}

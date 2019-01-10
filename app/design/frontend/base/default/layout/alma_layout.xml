@@ -24,17 +24,14 @@
  *
  */
 -->
-
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+<layout>
+    <checkout_cart_index>
+        <reference name="content">
+            <reference name="checkout.cart">
+                <reference name="checkout.cart.form.before">
+                    <block type="alma/eligibility" name="checkout.cart.alma_eligibility" template="alma/cart/eligibility.phtml"/>
+                </reference>
+            </reference>
+        </reference>
+    </checkout_cart_index>
+</layout>

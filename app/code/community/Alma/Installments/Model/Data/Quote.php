@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -23,18 +22,28 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
--->
 
-<config>
-    <modules>
-        <Alma_Installments>
-            <active>true</active>
-            <codePool>community</codePool>
-            <depends>
-                <Mage_Sales/>
-                <Mage_Payment/>
-                <Mage_Checkout/>
-            </depends>
-        </Alma_Installments>
-    </modules>
-</config>
+class Alma_Installments_Model_Data_Quote
+{
+    /**
+     * @param Mage_Sales_Model_Quote $quote
+     * @return array
+     */
+    public static function dataFromQuote($quote)
+    {
+        $shippingAddress = $quote->getShippingAddress();
+        $billingAddress = $quote->getBillingAddress();
+        $customer = $quote->getCustomer();
+
+        $data = [
+            'payment' => [
+                'purchase_amount' => Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal()),
+                'shipping_address' => Alma_Installments_Model_Data_Address::dataFromAddress($shippingAddress),
+                'billing_address' => Alma_Installments_Model_Data_Address::dataFromAddress($billingAddress),
+            ],
+            'customer' => Alma_Installments_Model_Data_Customer::dataFromCustomer($customer, [$billingAddress, $shippingAddress])
+        ];
+
+        return $data;
+    }
+}
