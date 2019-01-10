@@ -41,6 +41,9 @@
                 <sort_order>1</sort_order>
                 <logging>0</logging>
 
+                <excluded_product_types>virtual,downloadable</excluded_product_types>
+                <excluded_products_message>Virtual and downloadable products aren't eligible</excluded_products_message>
+
                 <live_api_key/>
                 <test_api_key/>
                 <api_mode>test</api_mode>
