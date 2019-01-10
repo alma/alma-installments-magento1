@@ -30,28 +30,27 @@ class Alma_Installments_Helper_Availability extends Mage_Core_Helper_Abstract
      */
     private $config;
     /**
-     * @var StoreManagerInterface
-     */
-    private $storeManager;
-    /**
      * @var Alma_Installments_Helper_AlmaClient
      */
     private $almaClient;
     /**
-     * @var Alma_Installments_Helper_Logger
+     * @var AlmaLogger
      */
     private $logger;
 
     public function __construct() {
         $this->config = Mage::helper('alma/config');
-        // $this->storeManager = $storeManager;
         $this->almaClient = Mage::helper('alma/AlmaClient');
-        $this->logger = Mage::helper('alma/logger');
+        $this->logger = Mage::helper('alma/logger')->getLogger();
     }
 
+    /**
+     * @return bool
+     * @throws Mage_Core_Model_Store_Exception
+     */
     public function isAvailable()
     {
-        $currencyCode = $this->storeManager->getStore()->getCurrentCurrencyCode();
+        $currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
         // $countryCode = ??
 
         return $this->isFullyConfigured() &&
