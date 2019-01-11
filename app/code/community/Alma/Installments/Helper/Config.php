@@ -52,6 +52,11 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return $value;
     }
 
+    public function isActive()
+    {
+        return (bool)(int)$this->get(self::CONFIG_ACTIVE);
+    }
+
     public function canLog()
     {
         return (bool)(int)$this->get(self::CONFIG_LOGGING, false);
@@ -115,7 +120,7 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
 
     public function getExcludedProductTypes()
     {
-        return $this->get(self::CONFIG_EXCLUDED_PRODUCT_TYPES);
+        return explode(',', $this->get(self::CONFIG_EXCLUDED_PRODUCT_TYPES));
     }
 
     public function getExcludedProductsMessage()

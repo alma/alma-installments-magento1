@@ -54,6 +54,7 @@ class Alma_Installments_Helper_Availability extends Mage_Core_Helper_Abstract
         // $countryCode = ??
 
         return $this->isFullyConfigured() &&
+            $this->config->isActive() &&
             $this->isAvailableForCurrency($currencyCode) /*&&
             $this->isAvailableForCountry($countryCode)*/
             ;

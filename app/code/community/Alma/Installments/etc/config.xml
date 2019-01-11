@@ -38,8 +38,12 @@
 
                 <active>1</active>
                 <order_status>pending</order_status>
+                <payment_action>capture</payment_action>
                 <sort_order>1</sort_order>
                 <logging>0</logging>
+
+                <allowspecific>0</allowspecific>
+                <specificcountry>FR</specificcountry>
 
                 <excluded_product_types>virtual,downloadable</excluded_product_types>
                 <excluded_products_message>Virtual and downloadable products aren't eligible</excluded_products_message>
@@ -104,5 +108,14 @@
                 </Alma_Installments>
             </updates>
         </layout>
+        <routers>
+            <alma>
+                <use>standard</use>
+                <args>
+                    <module>Alma_Installments</module>
+                    <frontName>alma</frontName>
+                </args>
+            </alma>
+        </routers>
     </frontend>
 </config>
