@@ -95,13 +95,17 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             }
 
             // Register successful capture to update order state and generate invoice
-            $order->addStatusHistoryComment($this->__('First instalment captured successfully'));
+            $historyItem = $order->addStatusHistoryComment($this->__('First instalment captured successfully'));
             $order->setCanSendNewEmailFlag(true);
             $order->save();
 
             // notify customer
-            $order->queueNewOrderEmail();
-            $order->setEmailSent(true);
+            $order->sendNewOrderEmail();
+
+            if ($historyItem) {
+                $historyItem->setIsCustomerNotified(1);
+                $historyItem->save();
+            }
 
             $payment->registerCaptureNotification($payment->getBaseAmountAuthorized());
 
