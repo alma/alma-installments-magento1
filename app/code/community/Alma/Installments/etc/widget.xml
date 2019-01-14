@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -22,34 +23,10 @@
  * @license   https://opensource.org/licenses/MIT The MIT License
  *
  */
-
-// @codingStandardsIgnoreFile
-
-?>
-<?php
-/** @var $block Alma_Installments_Block_Eligibility */
-?>
-<?php if ($this->showEligibilityMessage()): ?>
-    <style>
-        .alma-cart-eligibility {
-            margin: 10px 0;
-        }
-
-        .alma-cart-eligibility.widget {
-            padding: 0 20px;
-        }
-
-        .alma-cart-eligibility img {
-            display: inline;
-            vertical-align: middle;
-        }
-
-        .alma-cart-eligibility.widget img {
-            display: block;
-        }
-    </style>
-    <div class="alma-cart-eligibility<?php echo $this->isWidget() ? ' widget' : '' ?>">
-        <img src="<?php echo $this->getSkinUrl('alma/images/tiny_logo.png') ?>" alt="Alma">
-        <span class="alma-cart-eligibility--message"><?php echo $this->getEligibilityMessage() ?></span>
-    </div>
-<?php endif; ?>
+-->
+<widgets>
+    <alma_installments_widget type="Alma_Installments/eligibility" translate="name description" module="Alma_Installments">
+        <name>Alma Installments Eligibility widget</name>
+        <description type="desc">Displays eligibility for Alma monthly installments for the current cart</description>
+    </alma_installments_widget>
+</widgets>

@@ -23,7 +23,7 @@
  *
  */
 
-class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
+class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template implements Mage_Widget_Block_Interface
 {
     /** @var Alma_Installments_Helper_Eligibility  */
     private $eligibilityHelper;
@@ -31,6 +31,8 @@ class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
     private $availabilityHelper;
     /** @var Alma_Installments_Helper_Config */
     private $config;
+
+    private $isWidget = false;
 
     public function __construct(array $args = array())
     {
@@ -41,6 +43,17 @@ class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
         $this->config = Mage::helper('alma/config');
 
         $this->checkEligibility();
+    }
+
+    protected function _toHtml()
+    {
+        // We know that we're rendering as a widget when no template file is set yet
+        if (empty($this->_template)) {
+            $this->_template = "alma/cart/eligibility.phtml";
+            $this->isWidget = true;
+        }
+
+        return parent::_toHtml();
     }
 
     public function checkEligibility()
@@ -65,5 +78,10 @@ class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
 
     public function shouldDisplay() {
         return $this->availabilityHelper->isAvailable();
+    }
+
+    public function isWidget()
+    {
+        return $this->isWidget;
     }
 }
