@@ -28,9 +28,9 @@
     <checkout_cart_index>
         <reference name="content">
             <reference name="checkout.cart">
-                <reference name="checkout.cart.form.before">
+                <block type="core/text_list" name="checkout.cart.extra">
                     <block type="alma/eligibility" name="checkout.cart.alma_eligibility" template="alma/cart/eligibility.phtml"/>
-                </reference>
+                </block>
             </reference>
         </reference>
     </checkout_cart_index>
