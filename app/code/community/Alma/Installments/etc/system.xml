@@ -93,7 +93,7 @@
                                     <config_path>payment/alma_installments/excluded_product_types</config_path>
                                     <label>Excluded product types</label>
                                     <frontend_type>multiselect</frontend_type>
-                                    <source_model>alma/system_config_source_producttypes</source_model>
+                                    <source_model>alma/system_config_source_ProductTypes</source_model>
                                     <sort_order>4</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
@@ -126,7 +126,7 @@
                             <fields>
                                 <live_api_key translate="label">
                                     <config_path>payment/alma_installments/live_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_liveapikeyvalue</backend_model>
+                                    <backend_model>alma/system_config_backend_LiveAPIKeyValue</backend_model>
                                     <label>Live API key</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>11</sort_order>
@@ -137,7 +137,7 @@
 
                                 <test_api_key translate="label">
                                     <config_path>payment/alma_installments/test_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_testapikeyvalue</backend_model>
+                                    <backend_model>alma/system_config_backend_TestAPIKeyValue</backend_model>
                                     <label>Test API key</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>12</sort_order>
