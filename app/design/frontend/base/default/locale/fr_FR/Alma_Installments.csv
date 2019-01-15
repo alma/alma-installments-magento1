@@ -1,0 +1,6 @@
+"(Maximum amount: %s)","(Montant maximum: %s)"
+"(Minimum amount: %s)","(Montant minimum: %s)"
+"Error while processing your order: %s", "Une erreur est survenue lors du traitement de votre commande : %s"
+"There was an error processing your order. Please try again later or contact us if the problem persists", "Une erreur est survenue lors du traitement de votre commande. Merci de réesayer ou de nous contacter si le problème persiste."
+"There was an error when validating your payment. Please try again or contact us if the problem persists.", "Une erreur est survenue lors de la validation de votre paiement. Merci de réesayer ou de nous contacter si le problème persiste."
+"Your order has been canceled", "Votre commande a été annulée"

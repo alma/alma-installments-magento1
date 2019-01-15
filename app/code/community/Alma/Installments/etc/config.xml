@@ -33,7 +33,7 @@
     </modules>
     <default>
         <payment>
-            <alma_installments>
+            <alma_installments translate="excluded_products_message eligibility_message non_eligibility_message title description" module="Alma_Installments">
                 <model>alma/PaymentMethod</model>
 
                 <active>1</active>
@@ -99,6 +99,15 @@
                 </observers>
             </alma_saved_api_key>
         </events>
+        <translate>
+            <modules>
+                <Alma_Installments>
+                    <files>
+                        <default>Alma_Installments.csv</default>
+                    </files>
+                </Alma_Installments>
+            </modules>
+        </translate>
     </adminhtml>
     <frontend>
         <layout>
@@ -117,5 +126,14 @@
                 </args>
             </alma>
         </routers>
+        <translate>
+            <modules>
+                <Alma_Installments>
+                    <files>
+                        <default>Alma_Installments.csv</default>
+                    </files>
+                </Alma_Installments>
+            </modules>
+        </translate>
     </frontend>
 </config>

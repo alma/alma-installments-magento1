@@ -39,7 +39,7 @@ class Alma_Installments_Model_System_Config_Backend_APIKeyValue extends Mage_Adm
             throw new Exception(Mage::helper('adminhtml')->__('API key is required'));
         }
 
-        $genericError = new Exception(Mage::helper('adminhtml')->__("Error checking {$this->getApiKeyName()}"));
+        $genericError = new Exception("Error checking {$this->getApiKeyName()}");
 
         /** @var Alma_Installments_Helper_Availability $availabilityHelper */
         $availabilityHelper = Mage::helper('alma/availability');

@@ -103,7 +103,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         } catch (\Alma\API\RequestError $e) {
             $this->logger->error("Error creating payment: {$e->getMessage()}");
             $this->_cancelOrder();
-            Mage::throwException($this->_getHelper()->__(sprintf("Error while processing your order: %s", $e->getMessage())));
+            Mage::throwException(sprintf($this->_getHelper()->__("Error while processing your order: %s"), $e->getMessage()));
         }
 
         $quotePayment = $quote->getPayment();

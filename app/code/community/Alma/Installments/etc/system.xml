@@ -30,15 +30,14 @@
         <payment>
             <groups>
                 <alma_installments translate="label" module="Alma_Installments">
-                    <label><![CDATA[
-                        Alma Installments
-
+                    <label>Alma Installments</label>
+                    <comment><![CDATA[
                         <style>
                             .columns .alma-config .form-list {
                                 width: 100%;
                             }
                         </style>
-                    ]]></label>
+                    ]]></comment>
                     <expanded>1</expanded>
                     <frontend_class>alma-config</frontend_class>
                     <sort_order>3</sort_order>
@@ -221,15 +220,15 @@
                                     <show_in_store>0</show_in_store>
                                 </title>
 
-                                <description translate="label">
-                                    <config_path>payment/alma_installments/description</config_path>
-                                    <label>Description</label>
-                                    <frontend_type>text</frontend_type>
-                                    <sort_order>202</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </description>
+                                <!--<description translate="label">-->
+                                    <!--<config_path>payment/alma_installments/description</config_path>-->
+                                    <!--<label>Description</label>-->
+                                    <!--<frontend_type>text</frontend_type>-->
+                                    <!--<sort_order>202</sort_order>-->
+                                    <!--<show_in_default>1</show_in_default>-->
+                                    <!--<show_in_website>1</show_in_website>-->
+                                    <!--<show_in_store>0</show_in_store>-->
+                                <!--</description>-->
                             </fields>
                         </checkout_display>
                     </fields>
