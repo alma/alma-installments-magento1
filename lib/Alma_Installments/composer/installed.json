@@ -1,17 +1,17 @@
 [
     {
         "name": "alma/alma-php-client",
-        "version": "v0.0.5",
-        "version_normalized": "0.0.5.0",
+        "version": "v0.0.7",
+        "version_normalized": "0.0.7.0",
         "source": {
             "type": "git",
             "url": "https://github.com/alma/alma-php-client.git",
-            "reference": "02c338d7046755601ea22af64796a18bfd8222e4"
+            "reference": "f14cc0fa1ff0f06948de19f682e6ba8e33f1f9c3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/alma/alma-php-client/zipball/02c338d7046755601ea22af64796a18bfd8222e4",
-            "reference": "02c338d7046755601ea22af64796a18bfd8222e4",
+            "url": "https://api.github.com/repos/alma/alma-php-client/zipball/f14cc0fa1ff0f06948de19f682e6ba8e33f1f9c3",
+            "reference": "f14cc0fa1ff0f06948de19f682e6ba8e33f1f9c3",
             "shasum": ""
         },
         "require": {
@@ -23,7 +23,7 @@
             "roave/security-advisories": "@dev",
             "squizlabs/php_codesniffer": "^3.3"
         },
-        "time": "2019-01-03T14:40:54+00:00",
+        "time": "2019-02-14T16:31:35+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {

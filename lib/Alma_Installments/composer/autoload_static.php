@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit5e5a256ea54a8f8e39b38741f33a2cf9
+class ComposerStaticInit1f1af1f90c8a43a7b0b6da51431b5b7f
 {
     public static $files = array (
         '225ac4f132a892d5909550111fa3a942' => __DIR__ . '/..' . '/alma/alma-php-client/src/lib/array.php',
@@ -35,8 +35,8 @@ class ComposerStaticInit5e5a256ea54a8f8e39b38741f33a2cf9
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit5e5a256ea54a8f8e39b38741f33a2cf9::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit5e5a256ea54a8f8e39b38741f33a2cf9::$prefixDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1f1af1f90c8a43a7b0b6da51431b5b7f::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1f1af1f90c8a43a7b0b6da51431b5b7f::$prefixDirsPsr4;
 
         }, null, ClassLoader::class);
     }
