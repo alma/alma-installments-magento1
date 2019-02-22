@@ -59,12 +59,6 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $order = $payment->getOrder();
         $quote = $order->getQuote();
 
-        $customerId = $order->getCustomerId();
-        $customer = null;
-        if ($customerId) {
-            $customer = Mage::getModel('customer/customer')->load($customerId);
-        }
-
         $payment->setAmountAuthorized($order->getTotalDue());
         $payment->setBaseAmountAuthorized($order->getBaseTotalDue());
 
@@ -91,12 +85,16 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
             ),
         );
 
-        if ($customer) {
-            $data["customer"] = Alma_Installments_Model_Data_Customer::dataFromCustomer(
-                $customer,
-                array($order->getBillingAddress(), $order->getShippingAddress())
-            );
+        $customerId = $order->getCustomerId();
+        $customer = null;
+        if ($customerId) {
+            $customer = Mage::getModel('customer/customer')->load($customerId);
         }
+
+        $data["customer"] = Alma_Installments_Model_Data_Customer::dataFromCustomer(
+            $customer,
+            array($order->getBillingAddress(), $order->getShippingAddress())
+        );
 
         try {
             $almaPayment = $this->alma->payments->createPayment($data);
@@ -119,9 +117,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $payment = $this->getInfoInstance();
         $payment = Mage::getModel('sales/quote_payment')->load($payment->getId());
 
-        // Don't leave the payment URL in the payment information
         $url = $payment->getAdditionalInformation('payment_url');
-        $payment->unsAdditionalInformation('payment_url');
 
         if (!$url) {
             $this->_cancelOrder();
@@ -134,7 +130,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
 
     private function _cancelOrder()
     {
-        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $quote = $this->getCheckoutSession()->getQuote();
         /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->loadByIncrementId($quote->getReservedOrderId());
         $order->registerCancellation('Canceled because of technical issue/customer cancellation')->save();
@@ -152,5 +148,13 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         }
 
         return $isAvailable;
+    }
+
+    /**
+     * @return Mage_Checkout_Model_Session
+     */
+    private function getCheckoutSession()
+    {
+        return Mage::getSingleton('checkout/session');
     }
 }
