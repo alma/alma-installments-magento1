@@ -53,7 +53,7 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
     }
 
     /**
-     * @return Mage_Core_Model_Abstract
+     * @return Mage_Checkout_Model_Session
      */
     private function getSession()
     {
@@ -191,5 +191,23 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
         }
 
         $this->getResponse()->setBody($body);
+    }
+
+    public function cancelAction()
+    {
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $this->getSession()->getLastRealOrder();
+        if ($order) {
+            $this->cancelOrder($order, $this->__("Order canceled by customer"));
+
+            /** @var Mage_Sales_Model_Quote $quote */
+            $quote = Mage::getModel('sales/quote')->load($order->getQuoteId());
+            if ($quote->getId()) {
+                $quote->setIsActive(true)->save();
+                $this->getSession()->replaceQuote($quote);
+            }
+        }
+
+        return $this->_redirect('checkout/cart', array('_secure' => true));
     }
 }

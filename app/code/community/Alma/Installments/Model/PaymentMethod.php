@@ -69,14 +69,11 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $stateObject->setStatus('pending_payment');
         $stateObject->setIsNotified(false);
 
-        // Make the quote active again so that the cart is not empty in case of any error/customer return
-        $quote->setIsActive(true)->save();
-
         $data = array(
             "payment" => array(
                 "return_url" => Mage::getUrl('alma/payment/return'),
                 "ipn_callback_url" => Mage::getUrl('alma/payment/ipn'),
-                "customer_cancel_url" => Mage::getUrl('checkout/cart'),
+                "customer_cancel_url" => Mage::getUrl('alma/payment/cancel'),
                 "purchase_amount" => Alma_Installments_Helper_Functions::priceToCents((float)$order->getTotalDue()),
                 "shipping_address" => Alma_Installments_Model_Data_Address::dataFromAddress($order->getShippingAddress()),
                 "billing_address" => Alma_Installments_Model_Data_Address::dataFromAddress($order->getBillingAddress()),
