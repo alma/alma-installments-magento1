@@ -88,24 +88,16 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
             $this->eligible = false;
             $this->message = $nonEligibilityMessage;
 
-            try {
-                $merchant = $this->alma->merchants->me();
-            } catch (RequestError $e) {
-                $this->logger->error("Error fetching merchant information: {$e->getMessage()}");
-            }
+            $minAmount = $eligibility->constraints["purchase_amount"]["minimum"];
+            $maxAmount = $eligibility->constraints["purchase_amount"]["maximum"];
 
-            if (isset($merchant) && $merchant) {
-                $minAmount = $merchant->minimum_purchase_amount;
-                $maxAmount = $merchant->maximum_purchase_amount;
-
-                if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
-                    if ($cartTotal > $maxAmount) {
-                        $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($maxAmount));
-                        $this->message .= ' ' . sprintf($this->__('(Maximum amount: %s)'), $price);
-                    } else {
-                        $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($minAmount));
-                        $this->message .= ' ' . sprintf($this->__('(Minimum amount: %s)'), $price);
-                    }
+            if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
+                if ($cartTotal > $maxAmount) {
+                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($maxAmount));
+                    $this->message .= ' ' . sprintf($this->__('(Maximum amount: %s)'), $price);
+                } else {
+                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($minAmount));
+                    $this->message .= ' ' . sprintf($this->__('(Minimum amount: %s)'), $price);
                 }
             }
         } else {
