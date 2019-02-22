@@ -75,6 +75,8 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $data = array(
             "payment" => array(
                 "return_url" => Mage::getUrl('alma/payment/return'),
+                "ipn_callback_url" => Mage::getUrl('alma/payment/ipn'),
+                "customer_cancel_url" => Mage::getUrl('checkout/cart'),
                 "purchase_amount" => Alma_Installments_Helper_Functions::priceToCents((float)$order->getTotalDue()),
                 "shipping_address" => Alma_Installments_Model_Data_Address::dataFromAddress($order->getShippingAddress()),
                 "billing_address" => Alma_Installments_Model_Data_Address::dataFromAddress($order->getBillingAddress()),

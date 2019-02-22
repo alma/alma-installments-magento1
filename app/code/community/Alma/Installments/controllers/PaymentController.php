@@ -1,8 +1,4 @@
 <?php
-
-use Alma\API\Entities\Instalment;
-use Alma\API\Entities\Payment;
-
 /**
  * 2018 Alma / Nabla SAS
  *
@@ -27,13 +23,48 @@ use Alma\API\Entities\Payment;
  *
  */
 
+
+use Alma\API\Entities\Instalment;
+use Alma\API\Entities\Payment;
+
+
+class AlmaPaymentValidationError extends \Exception {
+    /**
+     * @var string
+     */
+    private $returnPath;
+
+    public function __construct($message = "", $returnPath = "checkout/onepage/failure", $code = 0, Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+        $this->returnPath = $returnPath;
+    }
+
+    public function getReturnPath() {
+        return $this->returnPath;
+    }
+}
+
+
 class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Action
 {
     private function cancelOrder($order, $error) {
         $order->registerCancellation($error)->save();
     }
 
-    public function returnAction()
+    /**
+     * @return Mage_Core_Model_Abstract
+     */
+    private function getSession()
+    {
+        return Mage::getSingleton('checkout/session');
+    }
+
+    /**
+     * @return string
+     * @throws AlmaPaymentValidationError
+     */
+    private function validatePayment()
     {
         /** @var AlmaLogger $logger */
         $logger = Mage::helper('alma/logger')->getLogger();
@@ -48,9 +79,7 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             $almaPayment = $alma->payments->fetch($pid);
         } catch (\Alma\API\RequestError $e) {
             $logger->error("Error fetching payment information ({$pid}) from Alma: {$e->getMessage()}");
-
-            $this->getSession()->addError($errorMessage);
-            return $this->_redirect('checkout/cart');
+            throw new AlmaPaymentValidationError($errorMessage, 'checkout/cart');
         }
 
         $order = Mage::getModel('sales/order')->load($almaPayment->custom_data["order_id"]);
@@ -74,8 +103,12 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
                 $logger->error($internalError);
                 $this->cancelOrder($order, $internalError);
 
-                $this->getSession()->addError($errorMessage);
-                return $this->_redirect('checkout/onepage/failure/');
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPayment->id, $internalError);
+                } catch (\Alma\API\RequestError $e) {
+                }
+
+                throw new AlmaPaymentValidationError($errorMessage, 'checkout/onepage/failure/');
             }
 
             $firstInstalment = $almaPayment->payment_plan[0];
@@ -90,8 +123,12 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
                 $logger->error($internalError);
                 $this->cancelOrder($order, $internalError);
 
-                $this->getSession()->addError($errorMessage);
-                return $this->_redirect('checkout/onepage/failure/');
+                try {
+                    $alma->payments->flagAsPotentialFraud($almaPayment->id, $internalError);
+                } catch (\Alma\API\RequestError $e) {
+                }
+
+                throw new AlmaPaymentValidationError($errorMessage, 'checkout/onepage/failure/');
             }
 
             // Register successful capture to update order state and generate invoice
@@ -108,31 +145,51 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             }
 
             $payment->registerCaptureNotification($payment->getBaseAmountAuthorized());
+            $payment->unsAdditionalInformation('payment_url');
+            $payment->save();
 
             $this->getSession()->setLastSuccessQuoteId($quoteId);
             $order->save();
 
-            return $this->_redirect('checkout/onepage/success', array('_secure'=>true));
+            return 'checkout/onepage/success';
 
         } elseif ($order->getState() == Mage_Sales_Model_Order::STATE_CANCELED) {
-            $this->getSession()->addError($this->__('Your order has been canceled'));
-            return $this->_redirect('checkout/onepage/failure', array('_secure'=>true));
+            throw new AlmaPaymentValidationError($this->__('Your order has been canceled'), 'checkout/onepage/failure/');
 
         } elseif (in_array($order->getState(), array(Mage_Sales_Model_Order::STATE_PROCESSING, Mage_Sales_Model_Order::STATE_COMPLETE, Mage_Sales_Model_Order::STATE_HOLDED, Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW))) {
             $this->getSession()->setLastSuccessQuoteId($quoteId);
             $order->save();
 
-            return $this->_redirect('checkout/onepage/success', array('_secure'=>true));
+            return 'checkout/onepage/success';
         }
 
-        return $this->_redirect('checkout/cart', array('_secure'=>true));
+        throw new AlmaPaymentValidationError(null, 'checkout/cart');
     }
 
-    /**
-     * @return Mage_Core_Model_Abstract
-     */
-    private function getSession()
+    public function returnAction()
     {
-        return Mage::getSingleton('checkout/session');
+        try {
+            $redirect_to = $this->validatePayment();
+        } catch (AlmaPaymentValidationError $e) {
+            $this->getSession()->addError($e->getMessage());
+            $redirect_to = $e->getReturnPath();
+        }
+
+        return $this->_redirect($redirect_to, array('_secure' => true));
+    }
+
+    public function ipnAction()
+    {
+        $this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
+        $body = Mage::helper('core')->jsonEncode(array('success' => true));
+
+        try {
+            $this->validatePayment();
+        } catch (Exception $e) {
+            $this->getResponse()->setHttpResponseCode(500);
+            $body = Mage::helper('core')->jsonEncode(array('error' => $e->getMessage()));
+        }
+
+        $this->getResponse()->setBody($body);
     }
 }
