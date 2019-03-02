@@ -63,10 +63,18 @@ class Alma_Installments_Helper_AlmaClient extends Mage_Core_Helper_Abstract
 
         try {
             $alma = new Client($apiKey, array('mode' => $mode, 'logger' => $this->logger));
+
+            $alma->addUserAgentComponent('Magento', Mage::getVersion());
+            $alma->addUserAgentComponent('Alma for Magento 1', $this->getExtensionVersion());
         } catch (\Exception $e) {
             $this->logger->error("Error creating Alma API client {$e->getMessage()}");
         }
 
         return $alma;
+    }
+
+    private function getExtensionVersion()
+    {
+        return (string)Mage::getConfig()->getNode()->modules->Alma_Installments->version;
     }
 }
