@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,22 +17,35 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright Copyright (c) 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
-namespace Alma\API\Entities;
-
-class Merchant extends Base
+class Alma_Installments_Model_System_Config_Backend_PnXAmountBoundary extends Mage_Core_Model_Config_Data
 {
-    public $name;
-    public $website;
-    public $state;
-    public $manually_reviewed;
-    public $can_create_payments;
-    public $minimum_purchase_amount;
-    public $maximum_purchase_amount;
-    public $fee_plans;
+    protected $boundary = null;
+
+    public function _afterLoad()
+    {
+        /** @var \Alma\API\Entities\Merchant $merchant */
+        $merchant = Mage::helper('alma/Data')->getMerchant();
+
+        $defaults = array(
+            "min" => $merchant ? $merchant->minimum_purchase_amount : 10000,
+            "max" => $merchant ? $merchant->maximum_purchase_amount : 100000
+        );
+        $value = $this->getValue();
+
+        if (empty($value)) {
+            $value = $defaults[$this->boundary];
+        }
+
+        $this->setValue(Alma_Installments_Helper_Functions::priceFromCents($value));
+    }
+
+    public function _beforeSave()
+    {
+        $this->setValue(Alma_Installments_Helper_Functions::priceToCents($this->getValue()));
+    }
 }

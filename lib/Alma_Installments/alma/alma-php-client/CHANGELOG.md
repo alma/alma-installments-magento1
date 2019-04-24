@@ -1,6 +1,19 @@
 CHANGELOG
 =========
 
+v1.0.2
+------
+
+* Bug fix: Always include a body for POST requests to prevent HTTP 411 error
+
+v1.0.1
+------
+
+* Adds `fee_plans` attribute to the `Merchant` entity
+* Deprecate `Payments::createPayment` in favor of `Payments::create`
+* Adds the `Payments::refund` endpoint to partially or totally refund a payment
+* [Adds PHPUnit and a few unit tests, but nothing big just yet]
+
 v1.0.0
 ------
 

@@ -60,7 +60,7 @@ class Payments extends Base
      * @return Payment
      * @throws RequestError
      */
-    public function createPayment($data)
+    public function create($data)
     {
         $res = $this->request(self::PAYMENTS_PATH)->setRequestBody($data)->post();
 
@@ -70,6 +70,19 @@ class Payments extends Base
 
         return new Payment($res->json);
     }
+
+    /**
+     * @param $data
+     *
+     * @return Payment
+     * @throws RequestError
+     * @deprecated Use Payments::create() instead
+     */
+    public function createPayment($data)
+    {
+        return $this->create($data);
+    }
+
 
     /**
      * @param $id string The external ID for the payment to fetch
@@ -109,5 +122,30 @@ class Payments extends Base
         }
 
         return true;
+    }
+
+    /**
+     * @param string $id ID of the payment to be refunded
+     * @param bool $totalRefund Should the payment be completely refunded? In this case, $amount is not required as the
+     *                          API will automatically compute the amount to refund, including possible customer fees
+     * @param int $amount Amount that should be refunded, for a partial refund. Must be expressed as a cents
+     *                          integer
+     * @return Payment
+     * @throws RequestError
+     */
+    public function refund($id, $totalRefund = true, $amount = null)
+    {
+        $req = $this->request(self::PAYMENTS_PATH . "/$id/refund");
+
+        if (!$totalRefund) {
+            $req->setRequestBody(array("amount" => $amount));
+        }
+
+        $res = $req->post();
+        if ($res->isError()) {
+            throw new RequestError($res->errorMessage, $req, $res);
+        }
+
+        return new Payment($res->json);
     }
 }

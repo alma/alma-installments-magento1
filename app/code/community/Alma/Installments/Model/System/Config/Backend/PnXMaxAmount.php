@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,22 +17,12 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright Copyright (c) 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
-namespace Alma\API\Entities;
-
-class Merchant extends Base
+class Alma_Installments_Model_System_Config_Backend_PnXMaxAmount extends Alma_Installments_Model_System_Config_Backend_PnXAmountBoundary
 {
-    public $name;
-    public $website;
-    public $state;
-    public $manually_reviewed;
-    public $can_create_payments;
-    public $minimum_purchase_amount;
-    public $maximum_purchase_amount;
-    public $fee_plans;
+    protected $boundary = 'max';
 }

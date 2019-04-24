@@ -39,6 +39,11 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_EXCLUDED_PRODUCT_TYPES = 'payment/alma_installments/excluded_product_types';
     const CONFIG_EXCLUDED_PRODUCTS_MESSAGE = 'payment/alma_installments/excluded_products_message';
 
+    const CONFIG_PNX_ENABLED = 'payment/alma_installments/p%dx_enabled';
+    const CONFIG_PNX_MIN_AMOUNT = 'payment/alma_installments/p%dx_min_amount';
+    const CONFIG_PNX_MAX_AMOUNT = 'payment/alma_installments/p%dx_max_amount';
+    const CONFIG_PNX_MAX_N = 'payment/alma_installments/pnx_max_n';
+
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
 
     public function get($field, $default = null, $storeId = null)
@@ -131,5 +136,27 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     public function isFullyConfigured()
     {
         return !$this->needsAPIKeys() && (bool)(int)$this->get(self::CONFIG_FULLY_CONFIGURED, false);
+    }
+
+    public function isPnXEnabled($n)
+    {
+        return (bool)(int)$this->get(sprintf(self::CONFIG_PNX_ENABLED, $n), $n == 3);
+    }
+
+    public function pnxMinAmount($n, $merchant = null)
+    {
+        $min = $merchant ? $merchant->minimum_purchase_amount : 10000;
+        return (int)$this->get(sprintf(self::CONFIG_PNX_MIN_AMOUNT, $n), $min);
+    }
+
+    public function pnxMaxAmount($n, $merchant = null)
+    {
+        $max = $merchant ? $merchant->maximum_purchase_amount : 100000;
+        return (int)$this->get(sprintf(self::CONFIG_PNX_MAX_AMOUNT, $n), $max);
+    }
+
+    public function pnxMaxN()
+    {
+        return (int)$this->get(self::CONFIG_PNX_MAX_N, 3);
     }
 }

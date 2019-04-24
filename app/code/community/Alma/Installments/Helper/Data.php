@@ -25,4 +25,33 @@
 
 class Alma_Installments_Helper_Data extends Mage_Core_Helper_Abstract {
 
+    /** @var \Alma\API\Entities\Merchant */
+    private $merchant = null;
+    /** @var \Alma\API\Client $alma */
+    private $alma;
+    /** @var \Psr\Log\LoggerInterface $logger */
+    private $logger;
+
+    public function __construct()
+    {
+        $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
+        $this->logger = Mage::helper('alma/Logger')->getLogger();
+    }
+
+    /**
+     * @param bool $force
+     * @return \Alma\API\Entities\Merchant
+     */
+    public function getMerchant($force = false)
+    {
+        if (!$this->merchant || $force) {
+            try {
+                $this->merchant = $this->alma->merchants->me();
+            } catch (\Exception $e) {
+                $this->logger->warning('Could not fetch merchant information for PNX min/max amounts');
+            }
+        }
+
+        return $this->merchant;
+    }
 }

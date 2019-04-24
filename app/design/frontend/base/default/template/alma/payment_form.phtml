@@ -1,0 +1,30 @@
+<ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
+    <li>
+        <?php if ($this->displayPnX(2)) { ?>
+            <p>
+                <input type="radio" id="alma-p2x" name="payment[installments_count]" value="2">
+                <label for="alma-p2x">
+                    <?php echo $this->__("Pay in %d installments", 2) ?>
+                </label>
+            </p>
+        <?php } ?>
+
+        <?php if ($this->displayPnX(3)) { ?>
+            <p>
+                <input type="radio" id="alma-p3x" name="payment[installments_count]" value="3" checked>
+                <label for="alma-p3x">
+                    <?php echo $this->__("Pay in %d installments", 3) ?>
+                </label>
+            </p>
+        <?php } ?>
+
+        <?php if ($this->displayPnX(4)) { ?>
+            <p>
+                <input type="radio" id="alma-p4x" name="payment[installments_count]" value="4">
+                <label for="alma-p4x">
+                    <?php echo $this->__("Pay in %d installments", 4) ?>
+                </label>
+            </p>
+        <?php } ?>
+    </li>
+</ul>

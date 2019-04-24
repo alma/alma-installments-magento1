@@ -31,6 +31,8 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
     protected $_canManageRecurringProfiles  = false;
     protected $_isInitializeNeeded          = true;
 
+    protected $_formBlockType = 'alma/PaymentForm';
+
     /** @var AlmaLogger */
     private $logger;
     /** @var \Alma\API\Client */
@@ -40,6 +42,12 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
     {
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
+    }
+
+    public function assignData($data)
+    {
+        $this->getInfoInstance()->setAdditionalInformation('installments_count', $data->getData('installments_count'));
+        return parent::assignData($data);
     }
 
     public function canUseForCurrency($currencyCode)
@@ -72,6 +80,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $data = array(
             "payment" => array(
                 "return_url" => Mage::getUrl('alma/payment/return'),
+                "installments_count" => (int)$payment->getAdditionalInformation('installments_count'),
                 "ipn_callback_url" => Mage::getUrl('alma/payment/ipn'),
                 "customer_cancel_url" => Mage::getUrl('alma/payment/cancel'),
                 "purchase_amount" => Alma_Installments_Helper_Functions::priceToCents((float)$order->getTotalDue()),
@@ -96,7 +105,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         );
 
         try {
-            $almaPayment = $this->alma->payments->createPayment($data);
+            $almaPayment = $this->alma->payments->create($data);
         } catch (\Alma\API\RequestError $e) {
             $this->logger->error("Error creating payment: {$e->getMessage()}");
             $this->_cancelOrder();
@@ -142,6 +151,8 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         if ($isAvailable) {
             $available = Mage::helper('alma/availability')->isAvailable();
             $eligible = Mage::helper('alma/eligibility')->checkEligibility();
+
+            $this->toto = 'yay';
 
             $isAvailable = $available && $eligible;
         }

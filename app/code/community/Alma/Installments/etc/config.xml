@@ -28,7 +28,7 @@
 <config>
     <modules>
         <Alma_Installments>
-            <version>1.0.1</version>
+            <version>1.1.0</version>
         </Alma_Installments>
     </modules>
     <default>
@@ -58,6 +58,10 @@
 
                 <title>Monthly Payments with Alma</title>
                 <description>Pay in 3 monthly payments with your credit card.</description>
+
+                <p2x_enabled>0</p2x_enabled>
+                <p3x_enabled>1</p3x_enabled>
+                <p4x_enabled>0</p4x_enabled>
             </alma_installments>
         </payment>
     </default>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,22 +17,40 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright Copyright (c) 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
-namespace Alma\API\Entities;
 
-class Merchant extends Base
+class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
 {
-    public $name;
-    public $website;
-    public $state;
-    public $manually_reviewed;
-    public $can_create_payments;
-    public $minimum_purchase_amount;
-    public $maximum_purchase_amount;
-    public $fee_plans;
+    /**
+     * @var Alma_Installments_Helper_Config
+     */
+    private $config;
+
+    protected function _construct()
+    {
+        parent::_construct();
+        $this->setTemplate('alma/payment_form.phtml');
+
+        $this->config = Mage::helper('alma/config');
+    }
+
+    public function displayPnX($n)
+    {
+        if (!$this->config->isPnXEnabled($n)) {
+            return false;
+        }
+
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::helper('checkout/cart')->getQuote();
+        if(!$quote) {
+            return false;
+        }
+
+        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
+        return $cartTotal >= $this->config->pnxMinAmount($n) && $cartTotal < $this->config->pnxMaxAmount($n);
+    }
 }

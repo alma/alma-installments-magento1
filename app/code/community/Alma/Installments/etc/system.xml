@@ -43,7 +43,7 @@
                     <sort_order>3</sort_order>
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
-                    <show_in_store>0</show_in_store>
+                    <show_in_store>1</show_in_store>
 
                     <fields>
                         <general_configuration type="group" translate="label">
@@ -53,7 +53,7 @@
                             <sort_order>0</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
 
                             <fields>
                                 <active translate="label">
@@ -64,7 +64,7 @@
                                     <sort_order>1</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </active>
                                 <sort_order translate="label">
                                     <config_path>payment/alma_installments/sort_order</config_path>
@@ -74,7 +74,7 @@
                                     <sort_order>2</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </sort_order>
                                 <logging translate="label comment">
                                     <config_path>payment/alma_installments/logging</config_path>
@@ -85,7 +85,7 @@
                                     <sort_order>3</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </logging>
 
                                 <excluded_product_types translate="label">
@@ -96,7 +96,7 @@
                                     <sort_order>4</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </excluded_product_types>
 
                                 <excluded_products_message translate="label comment">
@@ -107,65 +107,20 @@
                                     <sort_order>5</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </excluded_products_message>
                             </fields>
                         </general_configuration>
 
-                        <api_configuration type="group" translate="label comment">
-                            <expanded>1</expanded>
-                            <label>API configuration</label>
-                            <comment><![CDATA[You can find your API keys on <a href="https://dashboard.getalma.eu/security" target="_blank">your Alma dashboard</a>]]></comment>
-                            <frontend_type>text</frontend_type>
-                            <sort_order>10</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
-
-                            <fields>
-                                <live_api_key translate="label">
-                                    <config_path>payment/alma_installments/live_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_LiveAPIKeyValue</backend_model>
-                                    <label>Live API key</label>
-                                    <frontend_type>text</frontend_type>
-                                    <sort_order>11</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </live_api_key>
-
-                                <test_api_key translate="label">
-                                    <config_path>payment/alma_installments/test_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_TestAPIKeyValue</backend_model>
-                                    <label>Test API key</label>
-                                    <frontend_type>text</frontend_type>
-                                    <sort_order>12</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </test_api_key>
-
-                                <api_mode translate="label">
-                                    <config_path>payment/alma_installments/api_mode</config_path>
-                                    <label>API mode</label>
-                                    <frontend_type>select</frontend_type>
-                                    <source_model>alma/System_Config_Source_APIModes</source_model>
-                                    <sort_order>13</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
-                                </api_mode>
-                            </fields>
-                        </api_configuration>
-
                         <cart_display type="group" translate="label comment">
+                            <expanded>1</expanded>
                             <label>Cart display</label>
                             <comment>A message can be displayed in the cart and minicart to indicate the order eligibility for monthly payments</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
 
                             <fields>
                                 <show_eligibility_message translate="label">
@@ -176,7 +131,7 @@
                                     <sort_order>101</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </show_eligibility_message>
 
                                 <eligibility_message translate="label">
@@ -186,7 +141,7 @@
                                     <sort_order>102</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </eligibility_message>
 
                                 <non_eligibility_message translate="label">
@@ -196,18 +151,19 @@
                                     <sort_order>103</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </non_eligibility_message>
                             </fields>
                         </cart_display>
 
                         <checkout_display type="group" translate="label">
+                            <expanded>1</expanded>
                             <label>Checkout display</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>200</sort_order>
                             <show_in_default>1</show_in_default>
                             <show_in_website>1</show_in_website>
-                            <show_in_store>0</show_in_store>
+                            <show_in_store>1</show_in_store>
 
                             <fields>
                                 <title translate="label">
@@ -217,20 +173,191 @@
                                     <sort_order>201</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
-                                    <show_in_store>0</show_in_store>
+                                    <show_in_store>1</show_in_store>
                                 </title>
-
-                                <!--<description translate="label">-->
-                                    <!--<config_path>payment/alma_installments/description</config_path>-->
-                                    <!--<label>Description</label>-->
-                                    <!--<frontend_type>text</frontend_type>-->
-                                    <!--<sort_order>202</sort_order>-->
-                                    <!--<show_in_default>1</show_in_default>-->
-                                    <!--<show_in_website>1</show_in_website>-->
-                                    <!--<show_in_store>0</show_in_store>-->
-                                <!--</description>-->
                             </fields>
                         </checkout_display>
+
+                        <pnx_configuration type="group" translate="label">
+                            <expanded>1</expanded>
+                            <label>Installments plans</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>300</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+
+                            <fields>
+                                <p2x_label translate="label">
+                                    <label><![CDATA[<b>2-installment payments</b>]]></label>
+                                    <frontend_type>label</frontend_type>
+                                    <sort_order>301</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p2x_label>
+                                <p2x_enabled translate="label">
+                                    <config_path>payment/alma_installments/p2x_enabled</config_path>
+                                    <label>Enable</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>302</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p2x_enabled>
+                                <p2x_min_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p2x_min_amount</config_path>
+                                    <label>Minimum amount (€)</label>
+                                    <comment>Minimum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMinAmount</backend_model>
+                                    <sort_order>303</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p2x_min_amount>
+                                <p2x_max_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p2x_max_amount</config_path>
+                                    <label>Maximum amount (€)</label>
+                                    <comment>Maximum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMaxAmount</backend_model>
+                                    <sort_order>304</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p2x_max_amount>
+
+                                <p3x_label translate="label">
+                                    <label><![CDATA[<b>3-installment payments</b>]]></label>
+                                    <frontend_type>label</frontend_type>
+                                    <sort_order>305</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p3x_label>
+                                <p3x_enabled translate="label">
+                                    <config_path>payment/alma_installments/p3x_enabled</config_path>
+                                    <label>Enable</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>306</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p3x_enabled>
+                                <p3x_min_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p3x_min_amount</config_path>
+                                    <label>Minimum amount (€)</label>
+                                    <comment>Minimum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMinAmount</backend_model>
+                                    <sort_order>307</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p3x_min_amount>
+                                <p3x_max_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p3x_max_amount</config_path>
+                                    <label>Maximum amount (€)</label>
+                                    <comment>Maximum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMaxAmount</backend_model>
+                                    <sort_order>308</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p3x_max_amount>
+
+                                <p4x_label translate="label">
+                                    <label><![CDATA[<b>4-installment payments</b>]]></label>
+                                    <frontend_type>label</frontend_type>
+                                    <sort_order>309</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p4x_label>
+                                <p4x_enabled translate="label">
+                                    <config_path>payment/alma_installments/p4x_enabled</config_path>
+                                    <label>Enable</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>adminhtml/system_config_source_yesno</source_model>
+                                    <sort_order>310</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p4x_enabled>
+                                <p4x_min_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p4x_min_amount</config_path>
+                                    <label>Minimum amount (€)</label>
+                                    <comment>Minimum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMinAmount</backend_model>
+                                    <sort_order>311</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p4x_min_amount>
+                                <p4x_max_amount translate="label comment">
+                                    <config_path>payment/alma_installments/p4x_max_amount</config_path>
+                                    <label>Maximum amount (€)</label>
+                                    <comment>Maximum purchase amount to activate this plan</comment>
+                                    <frontend_type>text</frontend_type>
+                                    <backend_model>alma/system_config_backend_PnXMaxAmount</backend_model>
+                                    <sort_order>312</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </p4x_max_amount>
+                            </fields>
+                        </pnx_configuration>
+
+                        <api_configuration type="group" translate="label comment">
+                            <expanded>1</expanded>
+                            <label>API configuration</label>
+                            <comment><![CDATA[You can find your API keys on <a href="https://dashboard.getalma.eu/security" target="_blank">your Alma dashboard</a>]]></comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>400</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+
+                            <fields>
+                                <live_api_key translate="label">
+                                    <config_path>payment/alma_installments/live_api_key</config_path>
+                                    <backend_model>alma/system_config_backend_LiveAPIKeyValue</backend_model>
+                                    <label>Live API key</label>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>401</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </live_api_key>
+
+                                <test_api_key translate="label">
+                                    <config_path>payment/alma_installments/test_api_key</config_path>
+                                    <backend_model>alma/system_config_backend_TestAPIKeyValue</backend_model>
+                                    <label>Test API key</label>
+                                    <frontend_type>text</frontend_type>
+                                    <sort_order>402</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </test_api_key>
+
+                                <api_mode translate="label">
+                                    <config_path>payment/alma_installments/api_mode</config_path>
+                                    <label>API mode</label>
+                                    <frontend_type>select</frontend_type>
+                                    <source_model>alma/System_Config_Source_APIModes</source_model>
+                                    <sort_order>403</sort_order>
+                                    <show_in_default>1</show_in_default>
+                                    <show_in_website>1</show_in_website>
+                                    <show_in_store>1</show_in_store>
+                                </api_mode>
+                            </fields>
+                        </api_configuration>
                     </fields>
                 </alma_installments>
             </groups>

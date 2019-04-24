@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.1.0
+------
+
+* Dependencies update
+* Adds support for different installments plans: 2-, 3- and 4-installment plans, configurable in the Payment Methods 
+  settings.
+
 v1.0.1
 ------
 
