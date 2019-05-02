@@ -44,7 +44,7 @@ class Alma_Installments_Helper_Data extends Mage_Core_Helper_Abstract {
      */
     public function getMerchant($force = false)
     {
-        if (!$this->merchant || $force) {
+        if ($this->alma && (!$this->merchant || $force)) {
             try {
                 $this->merchant = $this->alma->merchants->me();
             } catch (\Exception $e) {

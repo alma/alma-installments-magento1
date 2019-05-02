@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.1.1
+------
+
+* Fixes bug that leads to a blank configuration page on first-time installation
+
 v1.1.0
 ------
 
