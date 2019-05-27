@@ -1,0 +1,33 @@
+version: '3.0'
+
+services:
+  web:
+    image: alexcheng/magento:1.9.3.8
+    ports:
+      - "80:80"
+    links:
+      - db
+    env_file:
+      - env
+    volumes:
+      - magento:/var/www/html
+      - ./src/app/etc/modules/Alma_Installments.xml:/var/www/html/app/etc/modules/Alma_Installments.xml
+      - ./src/app/code/community/Alma/Installments:/var/www/html/app/code/community/Alma/Installments
+      - ./src/lib/Alma_Installments:/var/www/html/lib/Alma_Installments
+      - ./src/app/design/frontend/base/default/layout/alma_layout.xml:/var/www/html/app/design/frontend/base/default/layout/alma_layout.xml
+      - ./src/app/design/frontend/base/default/template/alma:/var/www/html/app/design/frontend/base/default/template/alma
+      - ./src/skin/frontend/base/default/alma:/var/www/html/skin/frontend/base/default/alma
+      - ./src/app/design/frontend/base/default/locale/fr_FR/Alma_Installments.csv:/var/www/html/app/design/frontend/base/default/locale/fr_FR/Alma_Installments.csv
+      - ./src/app/locale/fr_FR/Alma_Installments.csv:/var/www/html/app/locale/fr_FR/Alma_Installments.csv
+
+  db:
+    image: mysql:5.6.23
+    volumes:
+      - ./db_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    env_file:
+      - env
+
+volumes:
+  magento:

@@ -25,7 +25,7 @@ You first need to create your merchant account on [dashboard.getalma.eu](https:/
 
 ### Installing
 
-Copy the module files to your Magento installation directory in the appropriate directory.
+Copy the module files located in `src` to your Magento installation directory in the appropriate directories.
 
 ### Configuring the plugin
 
