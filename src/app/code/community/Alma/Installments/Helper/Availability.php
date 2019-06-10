@@ -53,7 +53,7 @@ class Alma_Installments_Helper_Availability extends Mage_Core_Helper_Abstract
         $currencyCode = Mage::app()->getStore()->getCurrentCurrencyCode();
         // $countryCode = ??
 
-        return $this->isFullyConfigured() &&
+        return //$this->isFullyConfigured() &&
             $this->config->isActive() &&
             $this->isAvailableForCurrency($currencyCode) /*&&
             $this->isAvailableForCountry($countryCode)*/
