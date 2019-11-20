@@ -46,6 +46,10 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
 
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
 
+    const CONFIG_PRODUCT_SHOW_ELIGIBILITY_MESSAGE = 'product/alma_installments/show_eligibility_message';
+    const CONFIG_PRODUCT_ELIGIBILITY_MESSAGE = 'product/alma_installments/eligibility_message';
+    const CONFIG_PRODUCT_PLAN = 'product/alma_installments/show_plan';
+
     public function get($field, $default = null, $storeId = null)
     {
         $value = Mage::getStoreConfig($field, $storeId);
@@ -159,4 +163,20 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     {
         return (int)$this->get(self::CONFIG_PNX_MAX_N, 3);
     }
+
+    public function showProductEligibilityMessage()
+    {
+        return (bool) $this->get(self::CONFIG_SHOW_ELIGIBILITY_MESSAGE);
+    }
+
+    public function getProductEligibilityMessage()
+    {
+        return $this->get(self::CONFIG_PRODUCT_ELIGIBILITY_MESSAGE);
+    }
+
+    public function showProductPlan()
+    {
+        return $this->get(self::CONFIG_PRODUCT_PLAN);
+    }
+
 }

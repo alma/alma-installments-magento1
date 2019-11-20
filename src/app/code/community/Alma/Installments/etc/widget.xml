@@ -29,4 +29,44 @@
         <name>Alma Installments Eligibility widget</name>
         <description type="desc">Displays eligibility for Alma monthly installments for the current cart</description>
     </alma_installments_widget>
+    <alma_product_widget type="Alma_Installments/widget_product" translate="Installements detail on product page" module="Alma_Installments">
+        <name>Alma Installments Product Detail Eligibility</name>
+        <description type="desc">Display installments detail on product page</description>
+        <parameters>
+            <template>
+                <values>
+                    <default_template translate="label">
+                        <value>alma/product/eligibility.phtml</value>
+                        <label>Alma Template</label>
+                    </default_template>
+                </values>
+            </template>
+            <cache_lifetime translate="label description">
+                <label>Cache Lifetime (Seconds)</label>
+                <description>86400 by default, if not set. To refresh instantly, Clear the Blocks HTML Output Cache.</description>
+                <visible>1</visible>
+                <type>text</type>
+            </cache_lifetime>
+        </parameters>
+        <supported_blocks>
+            <product_info_extrahint>
+                <block_name>product.info.extrahint</block_name>
+                <template>
+                    <default>default_template</default>
+                </template>
+            </product_info_extrahint>
+            <left>
+                <block_name>left</block_name>
+                <template>
+                    <default>default_template</default>
+                </template>
+            </left>
+            <right>
+                <block_name>right</block_name>
+                <template>
+                    <default>default_template</default>
+                </template>
+            </right>
+        </supported_blocks>
+    </alma_product_widget>
 </widgets>

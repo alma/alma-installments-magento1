@@ -64,6 +64,13 @@
                 <p4x_enabled>0</p4x_enabled>
             </alma_installments>
         </payment>
+        <product>
+            <alma_installments translate="eligibility_message" module="Alma_Installments">
+                <show_eligibility_message>1</show_eligibility_message>
+                <eligibility_message>%s months installement available</eligibility_message>
+                <show_plan>1</show_plan>
+            </alma_installments>
+        </product>
     </default>
     <global>
         <helpers>
