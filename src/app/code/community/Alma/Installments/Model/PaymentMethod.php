@@ -91,6 +91,9 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
                     "quote_id" => $quote->getId()
                 )
             ),
+			"order" => array(
+				"merchant_reference" => $order->getIncrementId()
+			)
         );
 
         $customerId = $order->getCustomerId();
@@ -109,7 +112,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         } catch (\Alma\API\RequestError $e) {
             $this->logger->error("Error creating payment: {$e->getMessage()}");
             $this->_cancelOrder();
-            Mage::throwException(sprintf($this->_getHelper()->__("Error while processing your order: %s"), $e->getMessage()));
+            Mage::throwException(sprintf($this->_getHelper()->__("Error while processing your order: %s"), var_export($e->response, true)));
         }
 
         $quotePayment = $quote->getPayment();
