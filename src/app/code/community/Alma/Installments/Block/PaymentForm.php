@@ -29,28 +29,38 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
      * @var Alma_Installments_Helper_Config
      */
     private $config;
+	private $eligibilityHelper;
 
-    protected function _construct()
+	protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('alma/payment_form.phtml');
 
         $this->config = Mage::helper('alma/config');
+        $this->eligibilityHelper = Mage::helper('alma/eligibility');
     }
 
-    public function displayPnX($n)
+    public function availableInstallmentsCounts()
     {
-        if (!$this->config->isPnXEnabled($n)) {
-            return false;
-        }
+    	$availableInstallmentsCounts = array();
+    	foreach ($this->config->enabledInstallmentsCounts() as $n) {
+			if ($this->eligibilityHelper->isEligible($n)) {
+				$availableInstallmentsCounts[] = $n;
+			}
+		}
 
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
-        if(!$quote) {
-            return false;
-        }
+    	return $availableInstallmentsCounts;
+    }
 
-        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
-        return $cartTotal >= $this->config->pnxMinAmount($n) && $cartTotal < $this->config->pnxMaxAmount($n);
+	public function defaultInstallmentsCount()
+	{
+		$availableInstallmentsCounts = $this->availableInstallmentsCounts();
+
+		if (in_array(3, $availableInstallmentsCounts)) {
+			return 3;
+		} else {
+			$n = $availableInstallmentsCounts[count($availableInstallmentsCounts) - 1];
+			return $n;
+		}
     }
 }
