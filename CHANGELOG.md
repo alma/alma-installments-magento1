@@ -1,6 +1,15 @@
 Changelog
 =========
 
+v1.2.0
+------
+
+* Dependencies update
+* Code cleaning
+* Fix & improve handling of eligibility when several installments plans are activated
+* Fix & improve API key validation and saving: only the key for selected API mode is now required
+* Include order "increment ID" (i.e. order reference) in Alma's payment data – will be available in Alma data exports 
+
 v1.1.1
 ------
 

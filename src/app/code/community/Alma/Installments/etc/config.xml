@@ -28,7 +28,7 @@
 <config>
     <modules>
         <Alma_Installments>
-            <version>1.1.1</version>
+            <version>1.2.0</version>
         </Alma_Installments>
     </modules>
     <default>
