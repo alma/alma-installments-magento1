@@ -26,8 +26,10 @@
 namespace Alma\API\Endpoints;
 
 use Alma\API\Endpoints\Results\Eligibility;
+use Alma\API\Entities\Order;
 use Alma\API\Entities\Payment;
 use Alma\API\RequestError;
+use Alma\API\Response;
 
 class Payments extends Base
 {
@@ -42,13 +44,35 @@ class Payments extends Base
     public function eligibility($orderData)
     {
         $res = $this->request(self::PAYMENTS_PATH . '/eligibility')->setRequestBody($orderData)->post();
-        $result = new Eligibility($res);
 
-        if (!$result->isEligible) {
+        $serverError = $res->responseCode >= 500;
+
+        if (!$serverError && is_assoc_array($res->json)) {
+            $result = new Eligibility($res->json, $res->responseCode);
+            if (!$result->isEligible()) {
+                $this->logger->info(
+                    "Eligibility check failed for following reasons: " .
+                    var_export($result->reasons, true)
+                );
+            }
+        } elseif (!$serverError && is_array($res->json)) {
+            $result = [];
+            foreach ($res->json as $data) {
+                $eligibility = new Eligibility($data, $res->responseCode);
+                $result[$eligibility->getInstallmentsCount()] = $eligibility;
+                if (!$eligibility->isEligible()) {
+                    $this->logger->info(
+                        "Eligibility check failed for following reasons: " .
+                        var_export($eligibility->reasons, true)
+                    );
+                }
+            }
+        } else {
             $this->logger->info(
-                "Eligibility check failed for following reasons: " .
-                var_export($result->reasons, true)
+                "Unexpected value from eligibility: " . var_export($res->json, true)
             );
+
+            $result = new Eligibility(array("eligible" => false), $res->responseCode);
         }
 
         return $result;
@@ -148,4 +172,50 @@ class Payments extends Base
 
         return new Payment($res->json);
     }
+
+    /**
+     * Adds an Order to the given Payment, possibly overwriting existing orders
+     *
+     * @param string $id ID of the payment to which the order must be added
+     * @param array $orderData Data of the Order
+     * @param bool $overwrite Should the order replace any other order set on the payment, or be appended to the payment's orders (default: false)
+     *
+     * @return Order
+     *
+     * @throws RequestError
+     */
+    public function addOrder($id, $orderData, $overwrite = false)
+    {
+        $req = $this->request(self::PAYMENTS_PATH . "/$id/orders")->setRequestBody(array("order" => $orderData));
+
+        $res = null;
+        if ($overwrite) {
+            $res = $req->post();
+        } else {
+            $res = $req->put();
+        }
+
+        return new Order(end($res->json));
+    }
+
+    /**
+     * Sends a SMS to the customer, containing a link to the payment's page
+     * /!\ Your account must be authorized by Alma to use that endpoint; it will otherwise fail with a 403 error
+     *
+     * @param string $id ID of the payment to send a SMS for
+     *
+     * @return bool
+     *
+     * @throws RequestError
+     */
+    public function sendSms(string $id)
+    {
+        $res = $this->request(self::PAYMENTS_PATH . "/$id/send-sms")->post();
+        if ($res->isError()) {
+            throw new RequestError($res->errorMessage, null, $res);
+        }
+
+        return true;
+    }
+
 }

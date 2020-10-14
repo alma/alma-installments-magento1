@@ -23,47 +23,53 @@
  *
  */
 
-namespace Alma\API\Entities;
+namespace Alma\API;
 
-class Payment extends Base
+use Entities\Base;
+
+class PaginatedResults implements \Iterator
 {
-    const STATE_IN_PROGRESS = 'in_progress';
-    const STATE_PAID = 'paid';
+    protected $position = 0;
+    protected $response;
+    protected $nextPage;
 
-    const FRAUD_AMOUNT_MISMATCH = 'amount_mismatch';
-    const FRAUD_STATE_ERROR = 'state_error';
-
-    public $url;
-    public $state;
-    public $purchase_amount;
-    public $payment_plan;
-    public $return_url;
-    public $custom_data;
-    public $orders;
-
-    public function __construct($attributes)
+    public function __construct($response, $object, $nextPage)
     {
-        // Manually process `payment_plan` to create Instalment instances
-        if (array_key_exists('payment_plan', $attributes)) {
-            $this->payment_plan = array();
+        $this->response = $response;
+        $this->entities = $response->json['data'];
+        $this->nextPage = $nextPage;
+    }
 
-            foreach ($attributes['payment_plan'] as $instalment) {
-                $this->payment_plan[] = new Instalment($instalment);
-            }
+    public function rewind()
+    {
+        $this->position = 0;
+    }
 
-            unset($attributes['payment_plan']);
+    public function current()
+    {
+        return $this->entities[$this->position];
+    }
+
+    public function key()
+    {
+        return $this->position;
+    }
+
+    public function next()
+    {
+        ++$this->position;
+    }
+
+    public function valid()
+    {
+        return isset($this->entities[$this->position]);
+    }
+
+    public function nextPage()
+    {
+        if (!array_key_exists('has_more', $this->response) ) {
+            return self([], Base::class);
         }
-
-        if (array_key_exists('orders', $attributes)) {
-            $this->orders = array();
-
-            foreach ($attributes['orders'] as $order) {
-                $this->orders[] = new Order($order);
-            }
-
-            unset($attributes['orders']);
-        }
-
-        parent::__construct($attributes);
+        return $this->nextPage(['starting_after' => array_slice($this->entities, -1, 1)->id]);
     }
 }
