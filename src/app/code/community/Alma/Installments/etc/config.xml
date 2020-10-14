@@ -110,6 +110,14 @@
                     </alma>
                 </observers>
             </admin_system_config_changed_section_payment>
+            <payment_info_block_prepare_specific_information>
+                <observers>
+                    <alma>
+                        <class>alma/observer</class>
+                        <method>preparePaymentInfo</method>
+                    </alma>
+                </observers>
+            </payment_info_block_prepare_specific_information>
         </events>
         <translate>
             <modules>

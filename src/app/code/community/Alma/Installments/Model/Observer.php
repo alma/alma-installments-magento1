@@ -52,4 +52,35 @@ class Alma_Installments_Model_Observer extends Varien_Event_Observer
 	{
 		// TODO: Move API key checks here
     }
+
+	/**
+	 * Add Alma payment information to order's payment info block when viewing an order paid for with Alma
+	 *
+	 * @param Varien_Event_Observer $observer
+	 * @throws Mage_Core_Exception
+	 */
+	public function preparePaymentInfo($observer)
+	{
+		/** @var Varien_Object $transport */
+		$transport = $observer->getData('transport');
+		/** @var Mage_Payment_Model_Info $payment */
+		$payment = $observer->getData('payment');
+
+		/** @var Mage_Core_Helper_String $h */
+		$h = Mage::helper('core/string');
+
+		if ($payment->getMethodInstance()->getCode() == Alma_Installments_Model_PaymentMethod::CODE) {
+			$transport->setData(
+				$h->__('Payment ID'),
+				$payment->getAdditionalInformation(Alma_Installments_Model_PaymentMethod::PAYMENT_INFO_ID)
+			);
+
+			$transport->setData(
+				$h->__('Installments count'),
+				$payment->getAdditionalInformation(
+					Alma_Installments_Model_PaymentMethod::PAYMENT_INFO_INSTALLMENTS_COUNT
+				)
+			);
+		}
+	}
 }

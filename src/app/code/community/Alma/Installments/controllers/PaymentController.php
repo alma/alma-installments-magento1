@@ -82,6 +82,7 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             throw new AlmaPaymentValidationError($errorMessage, 'checkout/cart');
         }
 
+        /** @var Mage_Sales_Model_Order $order */
         $order = Mage::getModel('sales/order')->load($almaPayment->custom_data["order_id"]);
         $payment = $order->getPayment();
 
@@ -145,8 +146,21 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             }
 
             $payment->registerCaptureNotification($payment->getBaseAmountAuthorized());
+
+            // Remove payment URL from payment info
             $payment->unsAdditionalInformation('payment_url');
-            $payment->save();
+
+            // Set additional information on it to be displayed in order details page
+			try {
+				$payment->setAdditionalInformation(Alma_Installments_Model_PaymentMethod::PAYMENT_INFO_ID, $almaPayment->id);
+				$payment->setAdditionalInformation(Alma_Installments_Model_PaymentMethod::PAYMENT_INFO_INSTALLMENTS_COUNT, count($almaPayment->payment_plan));
+			} catch (Mage_Core_Exception $e) {
+				$logger->warning("Could not save Alma transaction information on order {$order->getIncrementId()}");
+			}
+
+			$payment->save();
+
+
 
             $this->getSession()->setLastSuccessQuoteId($quoteId);
             $order->save();
