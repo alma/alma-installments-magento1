@@ -25,32 +25,39 @@
 
 class Alma_Installments_Model_Observer extends Varien_Event_Observer
 {
-    /**
-     * @param Varien_Event_Observer $observer
-     */
-    public function handleSavedApiKey($observer)
-    {
-        $map = [
-            'live' => 'test',
-            'test' => 'live'
-        ];
-
-        $modeToTest = $map[$observer->getData('mode')];
-
-        $configPath = 'payment/' .  Alma_Installments_Model_PaymentMethod::CODE  . '/fully_configured';
-        if (Mage::helper('alma/availability')->canConnectToAlma($modeToTest)) {
-            Mage::getConfig()->saveConfig($configPath, 1, 'default', 0);
-        } else {
-            Mage::getConfig()->saveConfig($configPath, 0, 'default', 0);
-        }
-    }
-
 	/**
 	 * @param Varien_Event_Observer $observer
+	 * @throws Exception
 	 */
 	public function handleConfigChange($observer)
 	{
-		// TODO: Move API key checks here
+		/** @var Alma_Installments_Helper_Config $config */
+		$config = Mage::helper('alma/config');
+		/** @var Alma_Installments_Helper_Availability $availability */
+		$availability = Mage::helper('alma/availability');
+		/** @var Mage_Core_Helper_String $h */
+		$h = Mage::helper('core/string');
+
+		if (empty($config->getActiveAPIKey())) {
+			throw new Exception($h->__('API key is required:') . ' ' . $config->getActiveMode());
+		}
+
+		if ($availability->canConnectToAlma($config->getActiveMode())) {
+			// Everything is OK if API key provided for selected API mode works
+			Mage::getConfig()->saveConfig(Alma_Installments_Helper_Config::CONFIG_FULLY_CONFIGURED, 1);
+		} else {
+			// Otherwise, "deactivate" module...
+			Mage::getConfig()->saveConfig(Alma_Installments_Helper_Config::CONFIG_FULLY_CONFIGURED, 0);
+
+			// ... and reset API key for selected API mode
+			$keyConfigPath = Alma_Installments_Helper_Config::CONFIG_TEST_API_KEY;
+			if ($config->getActiveMode() === 'live') {
+				$keyConfigPath = Alma_Installments_Helper_Config::CONFIG_LIVE_API_KEY;
+			}
+			Mage::getConfig()->saveConfig($keyConfigPath, '');
+
+			throw new Exception($h->__($config->getActiveMode() . ' API key is invalid. Please double-check and retry.'));
+		}
     }
 
 	/**

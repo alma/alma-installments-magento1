@@ -93,15 +93,6 @@
     </global>
     <adminhtml>
         <events>
-            <alma_saved_api_key>
-                <observers>
-                    <alma_observer>
-                        <type>model</type>
-                        <class>alma/observer</class>
-                        <method>handleSavedApiKey</method>
-                    </alma_observer>
-                </observers>
-            </alma_saved_api_key>
             <admin_system_config_changed_section_payment>
                 <observers>
                     <alma>

@@ -326,7 +326,7 @@
                             <fields>
                                 <live_api_key translate="label">
                                     <config_path>payment/alma_installments/live_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_LiveAPIKeyValue</backend_model>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                                     <label>Live API key</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>401</sort_order>
@@ -337,7 +337,7 @@
 
                                 <test_api_key translate="label">
                                     <config_path>payment/alma_installments/test_api_key</config_path>
-                                    <backend_model>alma/system_config_backend_TestAPIKeyValue</backend_model>
+                                    <backend_model>adminhtml/system_config_backend_encrypted</backend_model>
                                     <label>Test API key</label>
                                     <frontend_type>text</frontend_type>
                                     <sort_order>402</sort_order>
