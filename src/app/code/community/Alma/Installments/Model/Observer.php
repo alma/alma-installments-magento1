@@ -44,4 +44,12 @@ class Alma_Installments_Model_Observer extends Varien_Event_Observer
             Mage::getConfig()->saveConfig($configPath, 0, 'default', 0);
         }
     }
+
+	/**
+	 * @param Varien_Event_Observer $observer
+	 */
+	public function handleConfigChange($observer)
+	{
+		// TODO: Move API key checks here
+    }
 }

@@ -102,6 +102,14 @@
                     </alma_observer>
                 </observers>
             </alma_saved_api_key>
+            <admin_system_config_changed_section_payment>
+                <observers>
+                    <alma>
+                        <class>alma/observer</class>
+                        <method>handleConfigChange</method>
+                    </alma>
+                </observers>
+            </admin_system_config_changed_section_payment>
         </events>
         <translate>
             <modules>
