@@ -155,8 +155,6 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
             $available = Mage::helper('alma/availability')->isAvailable();
             $eligible = Mage::helper('alma/eligibility')->checkEligibility();
 
-            $this->toto = 'yay';
-
             $isAvailable = $available && $eligible;
         }
 
