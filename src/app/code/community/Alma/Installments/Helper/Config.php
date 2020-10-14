@@ -42,11 +42,10 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_PNX_ENABLED = 'payment/alma_installments/p%dx_enabled';
     const CONFIG_PNX_MIN_AMOUNT = 'payment/alma_installments/p%dx_min_amount';
     const CONFIG_PNX_MAX_AMOUNT = 'payment/alma_installments/p%dx_max_amount';
-    const CONFIG_PNX_MAX_N = 'payment/alma_installments/pnx_max_n';
 
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
 
-    public function get($field, $default = null, $storeId = null)
+	public function get($field, $default = null, $storeId = null)
     {
         $value = Mage::getStoreConfig($field, $storeId);
 
@@ -155,8 +154,22 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return (int)$this->get(sprintf(self::CONFIG_PNX_MAX_AMOUNT, $n), $max);
     }
 
-    public function pnxMaxN()
-    {
-        return (int)$this->get(self::CONFIG_PNX_MAX_N, 3);
+	public function enabledInstallmentsCounts()
+	{
+		$installmentsCounts = array();
+
+		/** @var Alma_Installments_Helper_Data $dataHelper */
+		$dataHelper = Mage::helper('alma/data');
+		$merchant = $dataHelper->getMerchant();
+
+		foreach ($merchant->fee_plans as $fee_plan) {
+			$n = $fee_plan['installments_count'];
+
+			if ($this->isPnXEnabled($n)) {
+				$installmentsCounts[] = $n;
+			}
+		}
+
+		return $installmentsCounts;
     }
 }
