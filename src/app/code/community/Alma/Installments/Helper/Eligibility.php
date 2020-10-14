@@ -36,6 +36,9 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
 
     /** @var bool */
     private $eligible;
+    /** @var array */
+	private $eligibilities;
+
     /** @var string */
     private $message;
 
@@ -44,6 +47,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->config = Mage::helper('alma/config');
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
+        $this->eligibilities = array();
     }
 
     /**
@@ -75,21 +79,41 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $this->message = $eligibilityMessage;
         $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
 
-        try {
-            $eligibility = $this->alma->payments->eligibility(Alma_Installments_Model_Data_Quote::dataFromQuote($quote));
-        } catch (RequestError $e) {
-            $this->logger->error("Error checking payment eligibility: {$e->getMessage()}");
+        // Check that the amount is within any merchant-activated fee plan bounds
+		$installmentsCounts = array();
+		$enabledInstallmentsCounts = $this->config->enabledInstallmentsCounts();
+
+		foreach ($enabledInstallmentsCounts as $n) {
+			$min = $this->config->pnxMinAmount($n);
+			$max = $this->config->pnxMaxAmount($n);
+
+			if ($cartTotal >= $min && $cartTotal <= $max) {
+				$installmentsCounts[] = $n;
+			}
+		}
+
+		// Check that the in-bound amount is also deemed eligible by our API
+		if (!empty($installmentsCounts)) {
+			$requestData = Alma_Installments_Model_Data_Quote::dataFromQuote($quote, $installmentsCounts);
+
+			try {
+				$this->eligibilities = $this->alma->payments->eligibility($requestData);
+			} catch (RequestError $e) {
+				$this->logger->error("Error checking payment eligibility: {$e->getMessage()}");
+				$this->eligible = false;
+				$this->message = $nonEligibilityMessage;
+				return false;
+			}
+		}
+
+
+
+        if (empty($installmentsCounts) || (isset($eligibilities) && !$this->hasAnyEligible($eligibilities))) {
             $this->eligible = false;
             $this->message = $nonEligibilityMessage;
-            return false;
-        }
 
-        if (!$eligibility->isEligible) {
-            $this->eligible = false;
-            $this->message = $nonEligibilityMessage;
-
-            $minAmount = $eligibility->constraints["purchase_amount"]["minimum"];
-            $maxAmount = $eligibility->constraints["purchase_amount"]["maximum"];
+            $minAmount = min(array_map(array($this->config, 'pnxMinAmount'), $enabledInstallmentsCounts));
+            $maxAmount = max(array_map(array($this->config, 'pnxMaxAmount'), $enabledInstallmentsCounts));
 
             if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
                 if ($cartTotal > $maxAmount) {
@@ -107,10 +131,30 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         return $this->eligible;
     }
 
-    public function isEligible()
+    private function hasAnyEligible($eligibilities) {
+    	foreach ($eligibilities as $eligibility) {
+    		if ($eligibility->isEligible) {
+    			return true;
+			}
+		}
+
+    	return false;
+	}
+
+    public function isEligible($n = null)
     {
-        return $this->eligible;
-    }
+    	if ($n === null) {
+			return $this->eligible;
+		} else {
+			foreach ($this->eligibilities as $eligibility) {
+				if ($eligibility->installmentsCount === $n && $eligibility->isEligible) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
 
     public function getMessage()
     {

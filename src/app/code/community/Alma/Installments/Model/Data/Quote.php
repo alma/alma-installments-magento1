@@ -29,7 +29,7 @@ class Alma_Installments_Model_Data_Quote
      * @param Mage_Sales_Model_Quote $quote
      * @return array
      */
-    public static function dataFromQuote($quote)
+    public static function dataFromQuote($quote, $installmentsCounts = array(3))
     {
         $shippingAddress = $quote->getShippingAddress();
         $billingAddress = $quote->getBillingAddress();
@@ -38,6 +38,7 @@ class Alma_Installments_Model_Data_Quote
         $data = [
             'payment' => [
                 'purchase_amount' => Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal()),
+				'installments_count' => $installmentsCounts,
                 'shipping_address' => Alma_Installments_Model_Data_Address::dataFromAddress($shippingAddress),
                 'billing_address' => Alma_Installments_Model_Data_Address::dataFromAddress($billingAddress),
             ],
