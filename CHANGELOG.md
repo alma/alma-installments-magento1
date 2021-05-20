@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.2.1
+------
+
+* Fix some French missing translations
+
 v1.2.0
 ------
 
