@@ -17,7 +17,6 @@ services:
       - ./src/app/design/frontend/base/default/layout/alma_layout.xml:/var/www/html/app/design/frontend/base/default/layout/alma_layout.xml
       - ./src/app/design/frontend/base/default/template/alma:/var/www/html/app/design/frontend/base/default/template/alma
       - ./src/skin/frontend/base/default/alma:/var/www/html/skin/frontend/base/default/alma
-      - ./src/app/design/frontend/base/default/locale/fr_FR/Alma_Installments.csv:/var/www/html/app/design/frontend/base/default/locale/fr_FR/Alma_Installments.csv
       - ./src/app/locale/fr_FR/Alma_Installments.csv:/var/www/html/app/locale/fr_FR/Alma_Installments.csv
 
   db:
