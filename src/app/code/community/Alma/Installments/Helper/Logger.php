@@ -76,6 +76,6 @@ class AlmaLogger extends \Psr\Log\AbstractLogger
             LogLevel::EMERGENCY => Zend_log::EMERG,
         );
 
-        Mage::log($message, $levels[$level], 'alma.log');
+        Mage::log($message.' : '.print_r($context,1), $levels[$level], 'alma.log');
     }
 }
