@@ -35,6 +35,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
     protected $_isInitializeNeeded          = true;
 
     protected $_formBlockType = 'alma/PaymentForm';
+    protected $_infoBlockType = 'alma/Info';
 
     /** @var AlmaLogger */
     private $logger;
