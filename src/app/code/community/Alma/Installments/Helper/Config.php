@@ -99,29 +99,18 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
 
     public function getEligibilityMessage()
     {
-        return $this->__($this->get(self::CONFIG_ELIGIBILITY_MESSAGE));
+        return $this->__(trim($this->get(self::CONFIG_ELIGIBILITY_MESSAGE)));
     }
 
     public function getNonEligibilityMessage()
     {
-        return  $this->__($this->get(self::CONFIG_NON_ELIGIBILITY_MESSAGE));
+        return  $this->__(trim($this->get(self::CONFIG_NON_ELIGIBILITY_MESSAGE)));
     }
 
     public function showEligibilityMessage()
     {
         return (bool)(int)$this->get(self::CONFIG_SHOW_ELIGIBILITY_MESSAGE);
     }
-
-    public function getPaymentButtonTitle()
-    {
-        return $this->__($this->get(self::CONFIG_TITLE));
-    }
-
-    public function getPaymentButtonDescription()
-    {
-        return $this->__($this->get(self::CONFIG_DESCRIPTION));
-    }
-
     public function getExcludedProductTypes()
     {
         return explode(',', $this->get(self::CONFIG_EXCLUDED_PRODUCT_TYPES));
@@ -129,7 +118,7 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
 
     public function getExcludedProductsMessage()
     {
-        return $this->get(self::CONFIG_EXCLUDED_PRODUCTS_MESSAGE);
+        return $this->__(trim($this->get(self::CONFIG_EXCLUDED_PRODUCTS_MESSAGE)));
     }
 
     public function isFullyConfigured()
