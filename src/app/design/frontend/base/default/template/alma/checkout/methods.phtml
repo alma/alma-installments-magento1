@@ -51,7 +51,7 @@
         <span class="no-display"><input id="p_method_<?php echo $_code ?>" value="<?php echo $_code ?>" type="radio" name="payment[method]" checked="checked" class="radio" /></span>
         <?php $oneMethod = $_code; ?>
     <?php endif; ?>
-        <label for="p_method_<?php echo $_code ?>"><?php echo ($this->__(trim($this->escapeHtml($this->getMethodTitle($_method))))) ?> <?php echo $this->__(trim($this->getMethodLabelAfterHtml($_method))) ?></label>
+        <label for="p_method_<?php echo $_code ?>"><?php echo $this->__(trim($this->escapeHtml($this->getMethodTitle($_method)))) ?> <?php echo $this->__(trim($this->getMethodLabelAfterHtml($_method))) ?></label>
     </dt>
     <?php if ($html = $this->getPaymentMethodFormHtml($_method)): ?>
     <dd id="dd_method_<?php echo $_code ?>">
