@@ -35,6 +35,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
     protected $_isInitializeNeeded          = true;
 
     protected $_formBlockType = 'alma/PaymentForm';
+    protected $_infoBlockType = 'alma/Info';
 
     /** @var AlmaLogger */
     private $logger;
@@ -92,7 +93,8 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
                 "custom_data" => array(
                     "order_id" => $order->getId(),
                     "quote_id" => $quote->getId()
-                )
+                ),
+                'locale' => mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_LOCALE, $order->getStoreId())
             ),
 			"order" => array(
 				"merchant_reference" => $order->getIncrementId()

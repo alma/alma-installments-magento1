@@ -1,0 +1,11 @@
+"project_id" : "19"
+"api_token_env" : "CROWDIN_ALMA_TOKEN"
+"base_path" : "."
+"base_url" : "https://almapay.crowdin.com"
+"preserve_hierarchy": true
+
+files:
+  -
+    source: /src/app/locale/en_US/Alma_Installments.csv
+    translation: /src/app/locale/%locale_with_underscore%/Alma_Installments.csv
+    scheme: "source_phrase,translation"
