@@ -25,6 +25,7 @@
 
 namespace Alma\API\Endpoints;
 
+use Alma\API\Entities\FeePlan;
 use Alma\API\Entities\Merchant;
 use Alma\API\RequestError;
 
@@ -34,6 +35,7 @@ class Merchants extends Base
     const ME_PATH = '/v1/me';
 
     /**
+     * @return Merchant
      * @throws RequestError
      */
     public function me()
@@ -45,5 +47,27 @@ class Merchants extends Base
         }
 
         return new Merchant($res->json);
+    }
+    public function feePlans($kind = FeePlan::KIND_GENERAL, $installmentsCounts = "all", $includeDeferred = true)
+    {
+        if (is_array($installmentsCounts)) {
+            $only = implode(",", $installmentsCounts);
+        } else {
+            $only = $installmentsCounts;
+        }
+
+        $res = $this->request(self::ME_PATH . "/fee-plans")->setQueryParams(array(
+            "kind" => $kind,
+            "only" => $only,
+            "deferred" => $includeDeferred ? "true" : "false" // Avoid conversion to "0"/"1" our API doesn't recognize
+        ))->get();
+
+        if ($res->isError()) {
+            throw new RequestError($res->errorMessage, null, $res);
+        }
+
+        return array_map(function ($val) {
+            return new FeePlan($val);
+        }, $res->json);
     }
 }
