@@ -33,8 +33,6 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     const MAX_DISPLAY_KEY = 'custom_max_purchase_amount';
     const MAX_PURCHASE_AMOUNT_KEY = 'max_purchase_amount';
     const FEE_PLAN_ENABLE_KEY = 'enable';
-    const CONVERT_PRICE_FROM_CENTS = 'price_from_cents';
-    const CONVERT_PRICE_TO_CENTS = 'price_to_cents';
 
     private $almaClient;
     /**
@@ -197,11 +195,20 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     /**
      * @return string[]
      */
-    private function getFeePlansPriceKeys(){
+    private function getFeePlansPriceKeysToConvertForDisplay(){
         return [
             self::MIN_PURCHASE_AMOUNT_KEY,
             self::MIN_DISPLAY_KEY,
             self::MAX_PURCHASE_AMOUNT_KEY,
+            self::MAX_DISPLAY_KEY
+        ];
+    }
+    /**
+     * @return string[]
+     */
+    private function getFeePlansPriceKeysToConvertForSave(){
+        return [
+            self::MIN_DISPLAY_KEY,
             self::MAX_DISPLAY_KEY
         ];
     }
@@ -211,18 +218,24 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      * @param $type
      * @return mixed
      */
-    public function convertFeePlansPriceKeys($almaFeePlans, $convertType = self::CONVERT_PRICE_FROM_CENTS)
+    public function convertFeePlansPricesForSave($almaFeePlans)
     {
-        $priceKeys = $this->getFeePlansPriceKeys();
+       $priceKeys = $this->getFeePlansPriceKeysToConvertForSave();
         foreach ($almaFeePlans as $planKey => $feePlan) {
             foreach ($priceKeys as $priceKey) {
-                $price = $feePlan[$priceKey];
-                if($convertType == self::CONVERT_PRICE_FROM_CENTS) {
-                    $price = $this->functionsHelper->priceFromCents($price);
-                }
-                if ($convertType == self::CONVERT_PRICE_TO_CENTS){
-                    $price = $this->functionsHelper->priceToCents($price);
-                }
+                $price = $this->functionsHelper->priceToCents($feePlan[$priceKey]);
+                $almaFeePlans[$planKey][$priceKey] = $price;
+            }
+        }
+        return $almaFeePlans;
+    }
+
+    public function convertFeePlansPricesForDisplay($almaFeePlans)
+    {
+        $priceKeys = $this->getFeePlansPriceKeysToConvertForDisplay();
+        foreach ($almaFeePlans as $planKey => $feePlan) {
+            foreach ($priceKeys as $priceKey) {
+                $price = $this->functionsHelper->priceFromCents($feePlan[$priceKey]);
                 $almaFeePlans[$planKey][$priceKey] = $price;
             }
         }
