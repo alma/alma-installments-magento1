@@ -34,17 +34,12 @@
 class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Adminhtml_Model_System_Config_Backend_Serialized_Array
 {
     /**
-     * @var
-     */
-    private $logger;
-    /**
      * @var Mage_Core_Helper_Abstract|null
      */
     private $feePlansHelper;
     public function __construct()
     {
         $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
-        $this->logger = Mage::helper('alma/Logger')->getLogger();
 
         parent::__construct();
     }
@@ -65,7 +60,7 @@ class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Admin
 
             $almaApiFeePlans = $this->feePlansHelper->getFormattedFeePlansFromAlmaApi();
             $mergedConfigAndFormFeePlans = $this->feePlansHelper->mergeConfigAndFormFeePlan($almaApiFeePlans,$UnserializedFormFeePlans);
-            $feePlansWithPriceForDisplay = $this->feePlansHelper->convertFeePlansPriceKeys($mergedConfigAndFormFeePlans,Alma_Installments_Helper_FeePlansHelper::CONVERT_PRICE_FROM_CENTS);
+            $feePlansWithPriceForDisplay = $this->feePlansHelper->convertFeePlansPricesForDisplay($mergedConfigAndFormFeePlans);
 
             $this->setValue($feePlansWithPriceForDisplay);
         }
@@ -83,11 +78,11 @@ class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Admin
         } catch (Exception $e) {
             Mage::throwException(Mage::helper('adminhtml')->__('Serialized data is incorrect'));
         }
-
         $formFeePlans = $this->getValue();
         $configFeePlans = $this->feePlansHelper->getFeePlansFromConfig();
         $mergedConfigAndFormFeePlans = $this->feePlansHelper->mergeConfigAndFormFeePlan($configFeePlans,$formFeePlans);
-        $feePlansInCentForSave = $this->feePlansHelper->convertFeePlansPriceKeys($mergedConfigAndFormFeePlans,Alma_Installments_Helper_FeePlansHelper::CONVERT_PRICE_TO_CENTS);
+        $feePlansInCentForSave = $this->feePlansHelper->convertFeePlansPricesForSave($mergedConfigAndFormFeePlans);
+        $feePlansInCentForSave = $this->feePlansHelper->validateFeePlanMinAndMaxCustomAmount($feePlansInCentForSave);
         $this->setValue($feePlansInCentForSave);
         parent::_beforeSave();
     }

@@ -262,4 +262,25 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         return sprintf($stringForLabel,$valueForLabel);
     }
 
+    public function validateFeePlanMinAndMaxCustomAmount($feePlans)
+    {
+        foreach ($feePlans as $feePlanKey => $feePlan) {
+            if(
+                $feePlan[self::MIN_DISPLAY_KEY]<$feePlan[self::MIN_PURCHASE_AMOUNT_KEY]||
+                $feePlan[self::MIN_DISPLAY_KEY] >= $feePlan[self::MAX_DISPLAY_KEY])
+            {
+                Mage::getSingleton('adminhtml/session')->addWarning(Mage::helper('adminhtml')->__('Warning %s custom Min display amount is incorrect',$feePlan['pnx_label']));
+                $feePlans[$feePlanKey][self::MIN_DISPLAY_KEY] = $feePlan[self::MIN_PURCHASE_AMOUNT_KEY];
+            }
+            if(
+                $feePlan[self::MAX_DISPLAY_KEY]>$feePlan[self::MAX_PURCHASE_AMOUNT_KEY]||
+                $feePlan[self::MAX_DISPLAY_KEY] <= $feePlan[self::MIN_DISPLAY_KEY])
+            {
+                Mage::getSingleton('adminhtml/session')->addWarning(Mage::helper('adminhtml')->__('Warning %s custom Max display amount is incorrect',$feePlan['pnx_label']));
+                $feePlans[$feePlanKey][self::MAX_DISPLAY_KEY] = $feePlan[self::MAX_PURCHASE_AMOUNT_KEY];
+            }
+        }
+        return $feePlans;
+    }
+
 }
