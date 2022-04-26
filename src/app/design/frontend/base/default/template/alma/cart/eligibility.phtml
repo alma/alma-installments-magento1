@@ -29,7 +29,7 @@
 <?php
 /** @var $block Alma_Installments_Block_Eligibility */
 ?>
-<?php if ($this->showEligibilityMessage()): ?>
+<?php if ($this->showEligibilityMessage() && $this->checkEligibility()): ?>
     <style>
         .alma-cart-eligibility {
             margin: 10px 0;

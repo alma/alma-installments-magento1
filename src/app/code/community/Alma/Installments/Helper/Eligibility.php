@@ -40,18 +40,6 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
      */
     private $logger;
     /**
-     * @var bool
-     */
-    private $eligible;
-    /**
-     * @var array
-     */
-	private $eligibilities;
-    /**
-     * @var string
-     */
-    private $message;
-    /**
      * @var Alma_Installments_Helper_FeePlansHelper
      */
     private $feePlansHelper;
@@ -70,7 +58,6 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
         $this->config = Mage::helper('alma/config');
         $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
-        $this->eligibilities = array();
         $this->eligibleFeePlans = array();
         $this->eligibleFeePlansAreLoaded = false;
     }
@@ -127,7 +114,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
                 true
             );
         } catch (RequestError $e) {
-            $this->logger->info('$e',[$e->getMessage()]);
+            $this->logger->error('$e',[$e->getMessage()]);
             return [];
         }
         return $feePlansEligibilities;
@@ -162,116 +149,20 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
      * @return bool
      */
     public function checkEligibility() {
-        $eligibilityMessage = $this->config->getEligibilityMessage();
-        $nonEligibilityMessage = $this->config->getNonEligibilityMessage();
-        $excludedProductsMessage = $this->config->getExcludedProductsMessage();
-
-        if (!$this->alma) {
-            $this->eligible = false;
-            return false;
+        $isEligible = false;
+        $eligibleFeePlans = $this->getEligibleFeePlans();
+        if(count($eligibleFeePlans)){
+            $isEligible = true;
         }
-
-        if (!$this->checkItemsTypes()) {
-            $this->eligible = false;
-            $this->message = $nonEligibilityMessage . '<br>' . $excludedProductsMessage;
-            return false;
-        }
-
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
-        if(!$quote) {
-            $this->eligible = false;
-            return false;
-        }
-
-        $this->message = $eligibilityMessage;
-        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
-
-        // Check that the amount is within any merchant-activated fee plan bounds
-		$installmentsCounts = array();
-		$enabledInstallmentsCounts = $this->config->enabledInstallmentsCounts();
-
-		foreach ($enabledInstallmentsCounts as $n) {
-			$min = $this->config->pnxMinAmount($n);
-			$max = $this->config->pnxMaxAmount($n);
-
-			if ($cartTotal >= $min && $cartTotal <= $max) {
-				$installmentsCounts[] = $n;
-			}
-		}
-
-		// Check that the in-bound amount is also deemed eligible by our API
-		if (!empty($installmentsCounts)) {
-			$requestData = Alma_Installments_Model_Data_Quote::dataFromQuote($quote, $installmentsCounts);
-
-			try {
-				$this->eligibilities = $this->alma->payments->eligibility($requestData);
-			} catch (RequestError $e) {
-				$this->logger->error("Error checking payment eligibility: {$e->getMessage()}");
-				$this->eligible = false;
-				$this->message = $nonEligibilityMessage;
-				return false;
-			}
-		}
-
-
-
-        if (empty($installmentsCounts) || (isset($eligibilities) && !$this->hasAnyEligible($eligibilities))) {
-            $this->eligible = false;
-            $this->message = $nonEligibilityMessage;
-
-            $minAmount = min(array_map(array($this->config, 'pnxMinAmount'), $enabledInstallmentsCounts));
-            $maxAmount = max(array_map(array($this->config, 'pnxMaxAmount'), $enabledInstallmentsCounts));
-
-            if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
-                if ($cartTotal > $maxAmount) {
-                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($maxAmount));
-                    $this->message .= ' ' . sprintf($this->__('(Maximum amount: %s)'), $price);
-                } else {
-                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($minAmount));
-                    $this->message .= ' ' . sprintf($this->__('(Minimum amount: %s)'), $price);
-                }
-            }
-        } else {
-            $this->eligible = true;
-        }
-
-        return $this->eligible;
+        return $isEligible;
     }
 
-    private function hasAnyEligible($eligibilities) {
-    	foreach ($eligibilities as $eligibility) {
-    		if ($eligibility->isEligible) {
-    			return true;
-			}
-		}
-
-    	return false;
-	}
-
-    public function isEligible($n = null)
-    {
-    	if ($n === null) {
-			return $this->eligible;
-		} else {
-			foreach ($this->eligibilities as $eligibility) {
-				if ($eligibility->installmentsCount === $n && $eligibility->isEligible) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-
+    /**
+     * @return string
+     */
     public function getMessage()
     {
-        return $this->message;
-    }
-
-    private function getFormattedPrice($price)
-    {
-        return Mage::helper('core')->currency($price, true, false);
+        return $this->config->getEligibilityMessage();
     }
 
     /**
@@ -290,10 +181,14 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
                 return false;
             }
         }
-
         return true;
     }
 
+    /**
+     * @param $quote
+     * @param $installmentsQuery
+     * @return array
+     */
     private function formatEligibilityPayload($quote,$installmentsQuery)
     {
         return [
@@ -304,23 +199,25 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
          ];
     }
 
+    /**
+     * @return bool
+     */
     private function checkEligibilityPrerequisite()
     {
-        $isOk = true;
         if (!$this->alma) {
             $this->logger->error('Alma client is not define',[]);
-            $isOk = false;
+            return false;
         }
         /** @var Mage_Sales_Model_Quote $quote */
         $quote = Mage::helper('checkout/cart')->getQuote();
         if(!$quote) {
             $this->logger->error('Quote is not define ',[]);
-            $isOk = false;
+            return false;
         }
 
         if(!$this->checkItemsTypes()){
-            $isOk = false ;
+            return false ;
         }
-        return $isOk;
+        return true;
     }
 }

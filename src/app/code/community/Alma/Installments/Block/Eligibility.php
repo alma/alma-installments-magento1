@@ -41,8 +41,6 @@ class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template imple
         $this->eligibilityHelper = Mage::helper('alma/eligibility');
         $this->availabilityHelper = Mage::helper('alma/availability');
         $this->config = Mage::helper('alma/config');
-
-        $this->checkEligibility();
     }
 
     protected function _toHtml()
@@ -55,15 +53,9 @@ class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template imple
 
         return parent::_toHtml();
     }
-
     public function checkEligibility()
     {
-        $this->eligibilityHelper->checkEligibility();
-    }
-
-    public function isEligible()
-    {
-        return $this->eligibilityHelper->isEligible();
+        return $this->eligibilityHelper->checkEligibility();
     }
 
     public function showEligibilityMessage()
