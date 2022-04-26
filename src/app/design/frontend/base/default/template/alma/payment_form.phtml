@@ -5,7 +5,7 @@
                 <input
                     type="radio"
                     id="alma-p-<?php echo $feePlanKey ?>"
-                    name="payment[installments_count]"
+                    name="payment[<?= Alma_Installments_Model_PaymentMethod::ADDITIONAL_DATA_LABEL ?>]"
                     value="<?php echo $feePlanKey ?>"
                 >
                 <label for="alma-p-<?php echo $feePlanKey ?>">
