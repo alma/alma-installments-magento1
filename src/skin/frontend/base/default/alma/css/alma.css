@@ -1,0 +1,11 @@
+#payment_form_alma_installments ul{
+    margin: 0 4rem 0 0;
+}
+#payment_form_alma_installments ul li{
+    list-style-type: none;
+    padding: 5px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid silver;
+}
