@@ -75,12 +75,18 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $this->eligibleFeePlansAreLoaded = false;
     }
 
+    /**
+     * @throws Mage_Core_Exception
+     */
     public function getEligibleFeePlans()
     {
        if($this->eligibleFeePlansAreLoaded){
            return $this->eligibleFeePlans;
        }
-        return $this->getAlmaFeePlansEligibility();
+        $feePlansEligibilities = $this->getAlmaFeePlansEligibility();
+        $eligibleFeePlans = $this->selectEligibleFeePlans($feePlansEligibilities);
+        $this->saveEligibleFeePlans($eligibleFeePlans);
+        return $eligibleFeePlans;
     }
 
     /**
@@ -89,7 +95,6 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
      */
     private function getAlmaFeePlansEligibility()
     {
-        $this->eligibleFeePlansAreLoaded = true;
         if(!$this->checkEligibilityPrerequisite()){
             return [];
         }
@@ -125,10 +130,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
             $this->logger->info('$e',[$e->getMessage()]);
             return [];
         }
-
-        $eligibleFeePlans = $this->selectEligibleFeePlans($feePlansEligibilities);
-        $this->saveEligibleFeePlans($eligibleFeePlans);
-        return $eligibleFeePlans;
+        return $feePlansEligibilities;
     }
 
     /**
@@ -137,6 +139,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
      */
     private function saveEligibleFeePlans($eligibleFeePlans)
     {
+        $this->eligibleFeePlansAreLoaded = true;
         $this->eligibleFeePlans = $eligibleFeePlans;
     }
 
