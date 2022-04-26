@@ -26,41 +26,45 @@
 class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
 {
     /**
-     * @var Alma_Installments_Helper_Config
+     * @var Alma_Installments_Helper_Eligibility
      */
-    private $config;
-	private $eligibilityHelper;
+    private $eligibilityHelper;
+    /**
+     * @var Alma_Installments_Helper_Logger
+     */
+    private $logger;
+    /**
+     * @var Alma_Installments_Helper_Functions
+     */
+    private $functionsHelper;
 
-	protected function _construct()
+
+    protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('alma/payment_form.phtml');
-
-        $this->config = Mage::helper('alma/config');
+        $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->eligibilityHelper = Mage::helper('alma/eligibility');
+        $this->functionsHelper = Mage::helper('alma/Functions');
+
     }
 
-    public function availableInstallmentsCounts()
+    public function getEligibleFeePlans(){
+        try {
+            $eligibleFeePlans = $this->eligibilityHelper->getEligibleFeePlans();
+        } catch (Exception $e) {
+            $this->logger->error('Get Alma fee plans eligibility exception : ',[$e->getMessage()]);
+        }
+        $this->logger->info('$eligibleFeePlans',[$eligibleFeePlans]);
+        return $eligibleFeePlans;
+    }
+
+    public function tsToLocaleDate($ts)
     {
-    	$availableInstallmentsCounts = array();
-    	foreach ($this->config->enabledInstallmentsCounts() as $n) {
-			if ($this->eligibilityHelper->isEligible($n)) {
-				$availableInstallmentsCounts[] = $n;
-			}
-		}
-
-    	return $availableInstallmentsCounts;
+        return Mage::app()->getLocale()->date($ts)->toString(Zend_Date::DATE_MEDIUM);
     }
-
-	public function defaultInstallmentsCount()
-	{
-		$availableInstallmentsCounts = $this->availableInstallmentsCounts();
-
-		if (in_array(3, $availableInstallmentsCounts)) {
-			return 3;
-		} else {
-			$n = $availableInstallmentsCounts[count($availableInstallmentsCounts) - 1];
-			return $n;
-		}
+    public function convertCentToPrice($cents)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($cents), true, false);
     }
 }

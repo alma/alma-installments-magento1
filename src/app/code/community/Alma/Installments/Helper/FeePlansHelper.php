@@ -27,7 +27,8 @@
 class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_Config
 {
     const ONE_INSTALLMENT_KEY = "general_1_0_0";
-    const ALMA_FEE_PLANS_PATH = 'payment/alma_installments/base_fee_plans';
+    const ALMA_BASE_FEE_PLANS_PATH = 'payment/alma_installments/base_fee_plans';
+    const ALMA_PNX_CONFIG_FEE_PLANS_PATH = 'payment/alma_installments/pnx_config';
     const MIN_PURCHASE_AMOUNT_KEY = 'min_purchase_amount';
     const MIN_DISPLAY_KEY = 'custom_min_purchase_amount';
     const MAX_DISPLAY_KEY = 'custom_max_purchase_amount';
@@ -40,7 +41,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      */
     private $logger;
     /**
-     * @var Mage_Core_Helper_Abstract|null
+     * @var Alma_Installments_Helper_Functions
      */
     private $functionsHelper;
 
@@ -49,7 +50,6 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         $this->almaClient = Mage::helper('alma/AlmaClient')->getDefaultClient();
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->functionsHelper = Mage::helper('alma/Functions');
-
     }
 
     /**
@@ -83,7 +83,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         }
         // Save to config
         try {
-            $this->saveFeePlansToConfig($formattedFeePlans);
+            $this->saveBaseFeePlansToConfig($formattedFeePlans);
         } catch (Mage_Core_Exception $e) {
             $this->logger->error('Save Fee plans to config DB error ',[$e->getMessage()]);
         }
@@ -131,22 +131,43 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      * @return void
      * @throws Mage_Core_Exception
      */
-    public function saveFeePlansToConfig($almaFormattedFeePlans)
+    public function saveBaseFeePlansToConfig($almaFormattedFeePlans)
     {
         try {
             Mage::helper('core/unserializeArray')->unserialize(serialize($almaFormattedFeePlans));
         } catch (Exception $e) {
             Mage::throwException(Mage::helper('adminhtml')->__('Serialized data is incorrect'));
         }
-        Mage::getConfig()->saveConfig(self::ALMA_FEE_PLANS_PATH,serialize($almaFormattedFeePlans));
+        Mage::getConfig()->saveConfig(self::ALMA_BASE_FEE_PLANS_PATH,serialize($almaFormattedFeePlans));
     }
 
     /**
      * @return array
      */
-    public function getFeePlansFromConfig()
+    public function getBaseFeePlansFromConfig()
     {
-        return Mage::helper('core/unserializeArray')->unserialize($this->get(self::ALMA_FEE_PLANS_PATH));
+        return Mage::helper('core/unserializeArray')->unserialize($this->get(self::ALMA_BASE_FEE_PLANS_PATH));
+    }
+    /**
+     * @return array
+     */
+    public function getFeePlansConfigFromBackOffice()
+    {
+        return Mage::helper('core/unserializeArray')->unserialize($this->get(self::ALMA_PNX_CONFIG_FEE_PLANS_PATH));
+    }
+    /**
+     * @return array
+     */
+    public function getEnabledFeePlansConfigFromBackOffice()
+    {
+        $enabledFeePlans = [];
+        $feePlans = $this->getFeePlansConfigFromBackOffice();
+        foreach ($feePlans as $feePlan) {
+            if($feePlan['enable']){
+                $enabledFeePlans[$feePlan['id']] = $feePlan;
+            }
+        }
+        return $enabledFeePlans;
     }
 
     /**
@@ -192,6 +213,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
             self::FEE_PLAN_ENABLE_KEY
         ];
     }
+
     /**
      * @return string[]
      */
@@ -203,6 +225,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
             self::MAX_DISPLAY_KEY
         ];
     }
+
     /**
      * @return string[]
      */
@@ -230,6 +253,10 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         return $almaFeePlans;
     }
 
+    /**
+     * @param $almaFeePlans
+     * @return array
+     */
     public function convertFeePlansPricesForDisplay($almaFeePlans)
     {
         $priceKeys = $this->getFeePlansPriceKeysToConvertForDisplay();

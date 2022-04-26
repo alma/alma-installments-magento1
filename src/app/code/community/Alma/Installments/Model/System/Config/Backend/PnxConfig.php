@@ -79,7 +79,7 @@ class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Admin
             Mage::throwException(Mage::helper('adminhtml')->__('Serialized data is incorrect'));
         }
         $formFeePlans = $this->getValue();
-        $configFeePlans = $this->feePlansHelper->getFeePlansFromConfig();
+        $configFeePlans = $this->feePlansHelper->getBaseFeePlansFromConfig();
         $mergedConfigAndFormFeePlans = $this->feePlansHelper->mergeConfigAndFormFeePlan($configFeePlans,$formFeePlans);
         $feePlansInCentForSave = $this->feePlansHelper->convertFeePlansPricesForSave($mergedConfigAndFormFeePlans);
         $feePlansInCentForSave = $this->feePlansHelper->validateFeePlanMinAndMaxCustomAmount($feePlansInCentForSave);

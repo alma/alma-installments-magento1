@@ -34,6 +34,8 @@ use Alma\API\Response;
 class Payments extends Base
 {
     const PAYMENTS_PATH = '/v1/payments';
+    const ELIGIBILITY_PATH    = '/v1/payments/eligibility';
+    const ELIGIBILITY_PATH_V2 = '/v2/payments/eligibility';
 
     /**
      * @param array $orderData
@@ -41,37 +43,51 @@ class Payments extends Base
      * @return Eligibility
      * @throws RequestError
      */
-    public function eligibility($orderData)
+    public function eligibility(array $data, $raiseOnError = false)
     {
-        $res = $this->request(self::PAYMENTS_PATH . '/eligibility')->setRequestBody($orderData)->post();
+        $iSV1Payload = array_key_exists('payment', $data);
+        if ($iSV1Payload) {
+            $res = $this->request(self::ELIGIBILITY_PATH)->setRequestBody($data)->post();
+        } else {
+            $res = $this->request(self::ELIGIBILITY_PATH_V2)->setRequestBody($data)->post();
+        }
+        if ($raiseOnError && $res->isError()) {
+            throw new RequestError($res->errorMessage, null, $res);
+        }
 
         $serverError = $res->responseCode >= 500;
 
-        if (!$serverError && is_assoc_array($res->json)) {
+        if (!$serverError && $this->isAssocArray($res->json)) {
             $result = new Eligibility($res->json, $res->responseCode);
             if (!$result->isEligible()) {
-                $this->logger->info(
+                $this->logger->error(
                     "Eligibility check failed for following reasons: " .
                     var_export($result->reasons, true)
                 );
             }
         } elseif (!$serverError && is_array($res->json)) {
             $result = [];
-            foreach ($res->json as $data) {
-                $eligibility = new Eligibility($data, $res->responseCode);
-                $result[$eligibility->getInstallmentsCount()] = $eligibility;
+
+            foreach ($res->json as $eligibilityData) {
+
+                $eligibility = new Eligibility($eligibilityData, $res->responseCode);
+                if ($iSV1Payload) {
+                    $result[$eligibility->getInstallmentsCount()] = $eligibility;
+                } else {
+                    $result[$eligibility->getPlanKey()] = $eligibility;
+                }
+
                 if (!$eligibility->isEligible()) {
-                    $this->logger->info(
+                    $this->logger->error(
                         "Eligibility check failed for following reasons: " .
                         var_export($eligibility->reasons, true)
                     );
                 }
             }
         } else {
-            $this->logger->info(
+            $this->logger->error(
                 "Unexpected value from eligibility: " . var_export($res->json, true)
             );
-
             $result = new Eligibility(array("eligible" => false), $res->responseCode);
         }
 
@@ -208,7 +224,7 @@ class Payments extends Base
      *
      * @throws RequestError
      */
-    public function sendSms(string $id)
+    public function sendSms($id)
     {
         $res = $this->request(self::PAYMENTS_PATH . "/$id/send-sms")->post();
         if ($res->isError()) {
@@ -216,6 +232,16 @@ class Payments extends Base
         }
 
         return true;
+    }
+    /**
+     * @param $array
+     * @return bool
+     */
+    private function isAssocArray($array) {
+        if (!is_array($array)) {
+            return false;
+        }
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
     }
 
 }

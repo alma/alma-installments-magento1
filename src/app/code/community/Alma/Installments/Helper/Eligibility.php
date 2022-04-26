@@ -27,27 +27,132 @@ use Alma\API\RequestError;
 
 class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
 {
-    /** @var Alma_Installments_Helper_Config */
+    /**
+     * @var Mage_Core_Helper_Abstract|null
+     */
     private $config;
-    /** @var \Alma\API\Client  */
+    /**
+     * @var \Alma\API\Client
+     */
     private $alma;
-    /** @var AlmaLogger */
+    /**
+     * @var AlmaLogger
+     */
     private $logger;
-
-    /** @var bool */
+    /**
+     * @var bool
+     */
     private $eligible;
-    /** @var array */
+    /**
+     * @var array
+     */
 	private $eligibilities;
-
-    /** @var string */
+    /**
+     * @var string
+     */
     private $message;
+    /**
+     * @var Alma_Installments_Helper_FeePlansHelper
+     */
+    private $feePlansHelper;
+    /**
+     * @var array
+     */
+    private $eligibleFeePlans;
+    /**
+     * @var bool
+     */
+    private $eligibleFeePlansAreLoaded;
 
     public function __construct()
     {
         $this->logger = Mage::helper('alma/logger')->getLogger();
-        $this->config = Mage::helper('alma/config');
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
+        $this->config = Mage::helper('alma/config');
+        $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
         $this->eligibilities = array();
+        $this->eligibleFeePlans = array();
+        $this->eligibleFeePlansAreLoaded = false;
+    }
+
+    public function getEligibleFeePlans()
+    {
+       if($this->eligibleFeePlansAreLoaded){
+           return $this->eligibleFeePlans;
+       }
+        return $this->getAlmaFeePlansEligibility();
+    }
+
+    /**
+     * @return array|void
+     * @throws Mage_Core_Exception
+     */
+    private function getAlmaFeePlansEligibility()
+    {
+        $this->eligibleFeePlansAreLoaded = true;
+        if(!$this->checkEligibilityPrerequisite()){
+            return [];
+        }
+        $quote = Mage::helper('checkout/cart')->getQuote();
+        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
+        $enabledFeePlansInConfig = $this->feePlansHelper->getEnabledFeePlansConfigFromBackOffice();
+
+        $installmentsQuery = [];
+        foreach ($enabledFeePlansInConfig as $configFeePlan) {
+            if (
+                $cartTotal >= $configFeePlan[Alma_Installments_Helper_FeePlansHelper::MIN_DISPLAY_KEY] &&
+                $cartTotal <= $configFeePlan[Alma_Installments_Helper_FeePlansHelper::MAX_DISPLAY_KEY]
+            ){
+                $installmentsQuery[] = [
+                    'purchase_amount' => $cartTotal,
+                    'installments_count' => $configFeePlan['installments_count'],
+                    'deferred_days' => $configFeePlan['deferred_days'],
+                    'deferred_month' => $configFeePlan['deferred_months'],
+                    'cart_total' => $cartTotal,
+                ];
+            }
+        }
+        if (empty($installmentsQuery)) {
+            return [];
+        }
+
+        try {
+            $feePlansEligibilities = $this->alma->payments->eligibility(
+                $this->formatEligibilityPayload($quote, $installmentsQuery),
+                true
+            );
+        } catch (RequestError $e) {
+            $this->logger->info('$e',[$e->getMessage()]);
+            return [];
+        }
+
+        $eligibleFeePlans = $this->selectEligibleFeePlans($feePlansEligibilities);
+        $this->saveEligibleFeePlans($eligibleFeePlans);
+        return $eligibleFeePlans;
+    }
+
+    /**
+     * @param $eligibleFeePlans
+     * @return void
+     */
+    private function saveEligibleFeePlans($eligibleFeePlans)
+    {
+        $this->eligibleFeePlans = $eligibleFeePlans;
+    }
+
+    /**
+     * @param $feePlansEligibilities
+     * @return array
+     */
+    private function selectEligibleFeePlans($feePlansEligibilities){
+        $eligibleFeePlans = [];
+        foreach ($feePlansEligibilities as $planKey => $feePlansEligibility) {
+            /** @var Alma\API\Endpoints\Results\Eligibility $feePlansEligibility */
+            if ($feePlansEligibility->isEligible()){
+                $eligibleFeePlans[$planKey]=$feePlansEligibility;
+            }
+        }
+        return $eligibleFeePlans;
     }
 
     /**
@@ -178,10 +283,41 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quote->getAllItems() as $item) {
             if (in_array($item->getRealProductType(), $excludedProductTypes)) {
+                $this->logger->error('A product is in excluded product type list',[]);
                 return false;
             }
         }
 
         return true;
+    }
+
+    private function formatEligibilityPayload($quote,$installmentsQuery)
+    {
+        return [
+        'online'          => 'online',
+        'purchase_amount' => Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal()),
+        'locale'          => Mage::app()->getLocale()->getLocaleCode(),
+        'queries'         => $installmentsQuery,
+         ];
+    }
+
+    private function checkEligibilityPrerequisite()
+    {
+        $isOk = true;
+        if (!$this->alma) {
+            $this->logger->error('Alma client is not define',[]);
+            $isOk = false;
+        }
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::helper('checkout/cart')->getQuote();
+        if(!$quote) {
+            $this->logger->error('Quote is not define ',[]);
+            $isOk = false;
+        }
+
+        if(!$this->checkItemsTypes()){
+            $isOk = false ;
+        }
+        return $isOk;
     }
 }
