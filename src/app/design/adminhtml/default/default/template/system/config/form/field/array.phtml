@@ -9,9 +9,9 @@ $_colspan = $_colspan > 1 ? 'colspan="' . $_colspan . '"' : '';
 ?>
 
 <div class="grid" id="grid<?php echo $_htmlId ?>">
-    <table cellpadding="0" cellspacing="0" class="border">
+    <table class="border">
+        <caption><?= __("Payment plans configuration")?></caption>
         <tbody>
-
             <tr class="headings" id="headings<?php echo $_htmlId ?>">
 <?php foreach ($this->_columns as $columnName => $column):?>
                 <th><?php echo $column['label'] ?></th>
@@ -44,12 +44,12 @@ var arrayRow<?php echo $_htmlId ?> = {
         // generate default template data
         if ('' == templateData) {
             var d = new Date();
-            var templateData = {
+            templateData = {
             <?php foreach ($this->_columns as $columnName => $column):?>
                 <?php echo $columnName ?> : '',
             <?php endforeach;?>
                 _id : '_' + d.getTime() + '_' + d.getMilliseconds()
-            };
+            }
         }
 
         // insert before last row
