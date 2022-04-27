@@ -38,7 +38,9 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
      */
     private $functionsHelper;
 
-
+    /**
+     * @return void
+     */
     protected function _construct()
     {
         parent::_construct();
@@ -46,9 +48,12 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->eligibilityHelper = Mage::helper('alma/eligibility');
         $this->functionsHelper = Mage::helper('alma/Functions');
-
+        $this->quote = Mage::helper('checkout/cart')->getQuote();
     }
 
+    /**
+     * @return array
+     */
     public function getEligibleFeePlans(){
         try {
             $eligibleFeePlans = $this->eligibilityHelper->getEligibleFeePlans();
@@ -59,12 +64,66 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
         return $eligibleFeePlans;
     }
 
+    /**
+     * @param $ts
+     * @return string
+     */
     public function tsToLocaleDate($ts)
     {
         return Mage::app()->getLocale()->date($ts)->toString(Zend_Date::DATE_MEDIUM);
     }
+
+    /**
+     * @param $cents
+     * @return mixed
+     */
     public function convertCentToPrice($cents)
     {
         return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($cents), true, false);
     }
+
+    /**
+     * @param $fee
+     * @return string
+     */
+    public function getFeeLabel($fee)
+    {
+        return sprintf(__('Including fees: %s'),Mage::helper('core')->currency($this->functionsHelper->priceFromCents($fee)));
+    }
+
+    /**
+     * @return string
+     */
+    public function getCartTotal()
+    {
+        return Mage::helper('core')->currency($this->quote->getGrandTotal());
+    }
+
+    /**
+     * @param $annualInterestRate
+     * @return string
+     */
+    public function getAnnualInterestRate($annualInterestRate)
+    {
+        return $annualInterestRate/100 .'%' ;
+    }
+
+    /**
+     * @param $creditCost
+     * @return string
+     */
+    public function getCreditCost($creditCost)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($creditCost));
+    }
+
+    /**
+     * @param $creditCost
+     * @return string
+     */
+    public function getTotalPaid($creditCost)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($creditCost)+$this->quote->getGrandTotal());
+    }
+
 }

@@ -22,12 +22,27 @@
                         <li>
                             <span class="alma-installment--due-date"><?= $this->tsToLocaleDate($paymentPlan['due_date'])?></span>
                             <span class="alma-installment--amount-column">
-                                    <span class="alma-installment--amount"><?= $this->convertCentToPrice($paymentPlan['total_amount'])?></span>
+                                <span class="alma-installment--amount"><?= $this->convertCentToPrice($paymentPlan['total_amount'])?></span>
+                                    <?php if ($paymentPlan['customer_fee']>0){ ?>
                                     <span class="alma-installment--fee">
-                                            <span></span>
+                                            <span><?= $this->getFeeLabel($paymentPlan['customer_fee']) ?></span>
                                     </span>
+                                    <?php } ?>
                             </span>
                         </li>
+                    <?php } ?>
+                   <?php if(count($feePlan->getPaymentPlan())> 4) {?>
+                    <li>
+                        <span>
+                        <span><?= __('Your cart total : ') ?></span>
+                            <span class="alma-installment--cartTotal"><?= $this->getCartTotal() ?></span><br/>
+                            <span><?= __("Credit cost : ") ?></span><span><?= $this->getCreditCost($feePlan->getCustomerTotalCostAmount()) ?></span><br />
+                            <?php if($feePlan->getAnnualInterestRate()) {?>
+                            <span><?= __('Annual interest rate : ') ?></span><span><?= $this->getAnnualInterestRate($feePlan->getAnnualInterestRate())?></span><br />
+                            <?php } ?>
+                            <strong><span><?= __('Total : ')?></span><span><?= $this->getTotalPaid($feePlan->getCustomerTotalCostAmount())?></span></strong><br />
+                        </span>
+                    </li>
                     <?php } ?>
                 </ul>
             </p>
