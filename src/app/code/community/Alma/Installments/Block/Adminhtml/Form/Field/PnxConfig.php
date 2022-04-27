@@ -25,6 +25,8 @@
 
 class Alma_Installments_Block_Adminhtml_Form_Field_PnxConfig extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
 {
+    const SMALL_COLUMN_STYLE = 'width:50px';
+
     protected $isAllowRenderer;
 
     public function __construct()
@@ -45,20 +47,20 @@ class Alma_Installments_Block_Adminhtml_Form_Field_PnxConfig extends Mage_Adminh
         ));
         $this->addColumn('min_purchase_amount', array(
             'label' => Mage::helper('alma')->__('Min purchase amount'),
-            'style' => 'width:50px',
+            'style' => self::SMALL_COLUMN_STYLE,
             'renderer' => new Alma_Installments_Model_System_Config_Backend_PnxStringRender(),
         ));
         $this->addColumn('custom_min_purchase_amount', array(
             'label' => Mage::helper('alma')->__('Min display amount'),
-            'style' => 'width:50px',
+            'style' => self::SMALL_COLUMN_STYLE,
         ));
         $this->addColumn('custom_max_purchase_amount', array(
             'label' => Mage::helper('alma')->__('Max display amount'),
-            'style' => 'width:50px',
+            'style' => self::SMALL_COLUMN_STYLE,
         ));
         $this->addColumn('max_purchase_amount', array(
             'label' => Mage::helper('alma')->__('Max purchase amount'),
-            'style' => 'width:50px',
+            'style' => self::SMALL_COLUMN_STYLE,
             'renderer' => new Alma_Installments_Model_System_Config_Backend_PnxStringRender(),
         ));
         $this->_addAfter = false;

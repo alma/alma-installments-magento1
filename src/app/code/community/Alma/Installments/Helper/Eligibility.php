@@ -27,6 +27,8 @@ use Alma\API\RequestError;
 
 class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
 {
+    const MAGE_CART_KEY = 'checkout/cart';
+
     /**
      * @var Mage_Core_Helper_Abstract|null
      */
@@ -46,7 +48,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     /**
      * @var array
      */
-    private $eligibleFeePlans;
+    private $currentEligibleFeePlans;
     /**
      * @var bool
      */
@@ -58,7 +60,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
         $this->config = Mage::helper('alma/config');
         $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
-        $this->eligibleFeePlans = array();
+        $this->currentEligibleFeePlans = array();
         $this->eligibleFeePlansAreLoaded = false;
     }
 
@@ -68,7 +70,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     public function getEligibleFeePlans()
     {
        if($this->eligibleFeePlansAreLoaded){
-           return $this->eligibleFeePlans;
+           return $this->currentEligibleFeePlans;
        }
         $feePlansEligibilities = $this->getAlmaFeePlansEligibility();
         $eligibleFeePlans = $this->selectEligibleFeePlans($feePlansEligibilities);
@@ -85,7 +87,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         if(!$this->checkEligibilityPrerequisite()){
             return [];
         }
-        $quote = Mage::helper('checkout/cart')->getQuote();
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
         $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
         $enabledFeePlansInConfig = $this->feePlansHelper->getEnabledFeePlansConfigFromBackOffice();
 
@@ -127,7 +129,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     private function saveEligibleFeePlans($eligibleFeePlans)
     {
         $this->eligibleFeePlansAreLoaded = true;
-        $this->eligibleFeePlans = $eligibleFeePlans;
+        $this->currentEligibleFeePlans = $eligibleFeePlans;
     }
 
     /**
@@ -171,7 +173,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     private function checkItemsTypes()
     {
         /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
         $excludedProductTypes = $this->config->getExcludedProductTypes();
 
         /** @var Mage_Sales_Model_Quote_Item $item */
@@ -209,7 +211,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
             return false;
         }
         /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
         if(!$quote) {
             $this->logger->error('Quote is not define ',[]);
             return false;

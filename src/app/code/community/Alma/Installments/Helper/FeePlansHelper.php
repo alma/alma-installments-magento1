@@ -44,14 +44,18 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      * @var Alma_Installments_Helper_Functions
      */
     private $functionsHelper;
+    /**
+     * @var Mage_Core_Helper_String
+     */
+    private $unserializeArrayHelper;
 
     public function __construct()
     {
         $this->almaClient = Mage::helper('alma/AlmaClient')->getDefaultClient();
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->functionsHelper = Mage::helper('alma/Functions');
+        $this->unserializeArrayHelper = Mage::helper('core/unserializeArray');
     }
-
     /**
      * @return array
      */
@@ -134,7 +138,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     public function saveBaseFeePlansToConfig($almaFormattedFeePlans)
     {
         try {
-            Mage::helper('core/unserializeArray')->unserialize(serialize($almaFormattedFeePlans));
+            $this->unserializeArrayHelper->unserialize(serialize($almaFormattedFeePlans));
         } catch (Exception $e) {
             Mage::throwException(Mage::helper('adminhtml')->__('Serialized data is incorrect'));
         }
@@ -146,14 +150,14 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      */
     public function getBaseFeePlansFromConfig()
     {
-        return Mage::helper('core/unserializeArray')->unserialize($this->get(self::ALMA_BASE_FEE_PLANS_PATH));
+        return $this->unserializeArrayHelper->unserialize($this->get(self::ALMA_BASE_FEE_PLANS_PATH));
     }
     /**
      * @return array
      */
     public function getFeePlansConfigFromBackOffice()
     {
-        return Mage::helper('core/unserializeArray')->unserialize($this->get(self::ALMA_PNX_CONFIG_FEE_PLANS_PATH));
+        return $this->unserializeArrayHelper->unserialize($this->get(self::ALMA_PNX_CONFIG_FEE_PLANS_PATH));
     }
     /**
      * @return array

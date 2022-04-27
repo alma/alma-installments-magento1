@@ -4,8 +4,6 @@
 
 class Alma_Installments_Model_System_Config_Backend_PnxIsEnable  extends Mage_Core_Block_Html_Select
 {
-    private $columnName;
-
     /**
      * Render output
      *
@@ -21,6 +19,11 @@ class Alma_Installments_Model_System_Config_Backend_PnxIsEnable  extends Mage_Co
 
         return  $html;
     }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
     public function setInputName($value)
     {
         return $this->setName($value);

@@ -4,8 +4,6 @@
 
 class Alma_Installments_Model_System_Config_Backend_PnxStringRender  extends Mage_Core_Block_Abstract
 {
-    private $columnName;
-
     /**
      * Render output
      *
