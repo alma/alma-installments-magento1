@@ -126,39 +126,4 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return !$this->needsAPIKeys() && (bool)(int)$this->get(self::CONFIG_FULLY_CONFIGURED, false);
     }
 
-    public function isPnXEnabled($n)
-    {
-        return (bool)(int)$this->get(sprintf(self::CONFIG_PNX_ENABLED, $n), $n == 3);
-    }
-
-    public function pnxMinAmount($n, $merchant = null)
-    {
-        $min = $merchant ? $merchant->minimum_purchase_amount : 10000;
-        return (int)$this->get(sprintf(self::CONFIG_PNX_MIN_AMOUNT, $n), $min);
-    }
-
-    public function pnxMaxAmount($n, $merchant = null)
-    {
-        $max = $merchant ? $merchant->maximum_purchase_amount : 100000;
-        return (int)$this->get(sprintf(self::CONFIG_PNX_MAX_AMOUNT, $n), $max);
-    }
-
-	public function enabledInstallmentsCounts()
-	{
-		$installmentsCounts = array();
-
-		/** @var Alma_Installments_Helper_Data $dataHelper */
-		$dataHelper = Mage::helper('alma/data');
-		$merchant = $dataHelper->getMerchant();
-
-		foreach ($merchant->fee_plans as $fee_plan) {
-			$n = $fee_plan['installments_count'];
-
-			if ($this->isPnXEnabled($n)) {
-				$installmentsCounts[] = $n;
-			}
-		}
-
-		return $installmentsCounts;
-    }
 }
