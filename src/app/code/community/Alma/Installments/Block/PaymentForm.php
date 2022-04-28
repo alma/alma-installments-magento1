@@ -55,26 +55,26 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
      * @return array
      */
     public function getEligibleFeePlans(){
+        $eligibleFeePlans = [];
         try {
             $eligibleFeePlans = $this->eligibilityHelper->getEligibleFeePlans();
         } catch (Exception $e) {
             $this->logger->error('Get Alma fee plans eligibility exception : ',[$e->getMessage()]);
         }
-        $this->logger->info('$eligibleFeePlans',[$eligibleFeePlans]);
         return $eligibleFeePlans;
     }
 
     /**
-     * @param $ts
+     * @param int $timestamp
      * @return string
      */
-    public function tsToLocaleDate($ts)
+    public function timestampToLocaleDate($timestamp)
     {
-        return Mage::app()->getLocale()->date($ts)->toString(Zend_Date::DATE_MEDIUM);
+        return Mage::app()->getLocale()->date($timestamp)->toString(Zend_Date::DATE_MEDIUM);
     }
 
     /**
-     * @param $cents
+     * @param int $cents
      * @return mixed
      */
     public function convertCentToPrice($cents)
@@ -83,7 +83,7 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
     }
 
     /**
-     * @param $fee
+     * @param int $fee
      * @return string
      */
     public function getFeeLabel($fee)
@@ -109,7 +109,7 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
     }
 
     /**
-     * @param $creditCost
+     * @param int $creditCost
      * @return string
      */
     public function getCreditCost($creditCost)
@@ -118,7 +118,7 @@ class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
     }
 
     /**
-     * @param $creditCost
+     * @param int $creditCost
      * @return string
      */
     public function getTotalPaid($creditCost)

@@ -1,36 +1,27 @@
 <?php
 /**
- * Magento
+ * 2018-2019 Alma SAS
  *
- * NOTICE OF LICENSE
+ * THE MIT LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@magento.com so we can send you a copy immediately.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
+ * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
  *
- * DISCLAIMER
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+ * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
  *
- * Do not edit or add to this file if you wish to upgrade Magento to newer
- * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magento.com for more information.
- *
- * @category    Mage
- * @package     Mage_CatalogInventory
- * @copyright  Copyright (c) 2006-2020 Magento, Inc. (http://www.magento.com)
- * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
+ * @license   https://opensource.org/licenses/MIT The MIT License
  */
 
-/**
- * Adminhtml catalog inventory "Minimum Qty Allowed in Shopping Cart" field
- *
- * @category   Mage
- * @package    Mage_CatalogInventory
- * @author     Magento Core Team <core@magentocommerce.com>
- */
 class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Adminhtml_Model_System_Config_Backend_Serialized_Array
 {
     /**
@@ -40,12 +31,15 @@ class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Admin
     public function __construct()
     {
         $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
-
         parent::__construct();
     }
 
-
-    public function _afterLoad()
+    /**
+     * @description Set mixed value from bd and feePlans API on Backend Serialized Array
+     * @override
+     * @return void
+     */
+    protected function _afterLoad()
     {
         if (!is_array($this->getValue())) {
             $serializedFeePlans = $this->getValue();
@@ -68,6 +62,7 @@ class Alma_Installments_Model_System_Config_Backend_PnxConfig extends Mage_Admin
     /**
      * Check object existence in incoming data and unset array element with '__empty' key
      *
+     * @override
      * @throws Mage_Core_Exception
      * @return void
      */

@@ -20,7 +20,7 @@
                 <ul class="alma-installments" id="installments-<?= $feePlanKey ?>" style="display: none">
                     <?php foreach ($feePlan->getPaymentPlan() as $paymentPlanKey => $paymentPlan) { ?>
                         <li>
-                            <span class="alma-installment--due-date"><?= $this->tsToLocaleDate($paymentPlan['due_date'])?></span>
+                            <span class="alma-installment--due-date"><?= $this->timestampToLocaleDate($paymentPlan['due_date'])?></span>
                             <span class="alma-installment--amount-column">
                                 <span class="alma-installment--amount"><?= $this->convertCentToPrice($paymentPlan['total_amount'])?></span>
                                     <?php if ($paymentPlan['customer_fee']>0){ ?>

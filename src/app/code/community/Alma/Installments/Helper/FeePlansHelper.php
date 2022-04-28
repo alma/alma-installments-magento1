@@ -37,7 +37,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
 
     private $almaClient;
     /**
-     * @var
+     * @var Alma_Installments_Helper_AlmaClient
      */
     private $logger;
     /**
@@ -118,7 +118,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     }
 
     /**
-     * @param $almaFeePlans (warning reference)
+     * @param Alma\API\Endpoints\Results\Eligibility[] $almaFeePlans (work in reference)
      * @return void
      */
     public function unsetOneInstallmentPlan(&$almaFeePlans)
@@ -131,7 +131,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     }
 
     /**
-     * @param $almaFormattedFeePlans
+     * @param array $almaFormattedFeePlans
      * @return void
      * @throws Mage_Core_Exception
      */
@@ -147,20 +147,25 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
 
     /**
      * @return array
+     * @throws Exception
      */
     public function getBaseFeePlansFromConfig()
     {
         return $this->unserializeArrayHelper->unserialize($this->get(self::ALMA_BASE_FEE_PLANS_PATH));
     }
+
     /**
      * @return array
+     * @throws Exception
      */
     public function getFeePlansConfigFromBackOffice()
     {
         return $this->unserializeArrayHelper->unserialize($this->get(self::ALMA_PNX_CONFIG_FEE_PLANS_PATH));
     }
+
     /**
      * @return array
+     * @throws Exception
      */
     public function getEnabledFeePlansConfigFromBackOffice()
     {
@@ -175,9 +180,9 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     }
 
     /**
-     * @param $configFeePlan
-     * @param $formFeePlan
-     * @return array work in reference
+     * @param array $configFeePlans
+     * @param array $formFeePlans
+     * @return array
      */
     public function mergeConfigAndFormFeePlan($configFeePlans, $formFeePlans)
     {
@@ -190,8 +195,8 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     }
 
     /**
-     * @param $almaFeePlan
-     * @param $formFeePlan
+     * @param array $almaFeePlan
+     * @param array $formFeePlan
      * @return array
      */
     private function includeFormDataInFeePlan($almaFeePlan,$formFeePlan)
@@ -241,9 +246,8 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     }
 
     /**
-     * @param $data
-     * @param $type
-     * @return mixed
+     * @param array $almaFeePlans
+     * @return array
      */
     public function convertFeePlansPricesForSave($almaFeePlans)
     {
@@ -293,6 +297,10 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         return sprintf($stringForLabel,$valueForLabel);
     }
 
+    /**
+     * @param array $feePlans
+     * @return array
+     */
     public function validateFeePlanMinAndMaxCustomAmount($feePlans)
     {
         foreach ($feePlans as $feePlanKey => $feePlan) {

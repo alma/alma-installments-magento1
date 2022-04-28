@@ -65,6 +65,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * @return Alma\API\Endpoints\Results\Eligibility[]
      * @throws Mage_Core_Exception
      */
     public function getEligibleFeePlans()
@@ -72,17 +73,18 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
        if($this->eligibleFeePlansAreLoaded){
            return $this->currentEligibleFeePlans;
        }
-        $feePlansEligibilities = $this->getAlmaFeePlansEligibility();
-        $eligibleFeePlans = $this->selectEligibleFeePlans($feePlansEligibilities);
-        $this->saveEligibleFeePlans($eligibleFeePlans);
+        $feePlansEligibilities = $this->loadEligibleFeePlansFromApi();
+        $eligibleFeePlans = $this->filterEligibleFeePlans($feePlansEligibilities);
+        $this->eligibleFeePlansAreLoaded = true;
+        $this->currentEligibleFeePlans = $eligibleFeePlans;
         return $eligibleFeePlans;
     }
 
     /**
-     * @return array|void
-     * @throws Mage_Core_Exception
+     * @return Alma\API\Endpoints\Results\Eligibility[]
+     * @throws Mage_Core_Exception|Exception
      */
-    private function getAlmaFeePlansEligibility()
+    private function loadEligibleFeePlansFromApi()
     {
         if(!$this->checkEligibilityPrerequisite()){
             return [];
@@ -123,23 +125,12 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $eligibleFeePlans
-     * @return void
+     * @param Alma\API\Endpoints\Results\Eligibility[] $feePlansEligibilities
+     * @return Alma\API\Endpoints\Results\Eligibility[]
      */
-    private function saveEligibleFeePlans($eligibleFeePlans)
-    {
-        $this->eligibleFeePlansAreLoaded = true;
-        $this->currentEligibleFeePlans = $eligibleFeePlans;
-    }
-
-    /**
-     * @param $feePlansEligibilities
-     * @return array
-     */
-    private function selectEligibleFeePlans($feePlansEligibilities){
+    private function filterEligibleFeePlans($feePlansEligibilities){
         $eligibleFeePlans = [];
         foreach ($feePlansEligibilities as $planKey => $feePlansEligibility) {
-            /** @var Alma\API\Endpoints\Results\Eligibility $feePlansEligibility */
             if ($feePlansEligibility->isEligible()){
                 $eligibleFeePlans[$planKey]=$feePlansEligibility;
             }
