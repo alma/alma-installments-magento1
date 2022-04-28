@@ -44,8 +44,9 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_PNX_MAX_AMOUNT = 'payment/alma_installments/p%dx_max_amount';
 
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
+    const CONFIG_MERCHANT_ID = 'payment/alma_installments/merchant_id';
 
-	public function get($field, $default = null, $storeId = null)
+    public function get($field, $default = null, $storeId = null)
     {
         $value = Mage::getStoreConfig($field, $storeId);
 
@@ -124,6 +125,10 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     public function isFullyConfigured()
     {
         return !$this->needsAPIKeys() && (bool)(int)$this->get(self::CONFIG_FULLY_CONFIGURED, false);
+    }
+    public function getMerchantId()
+    {
+        return $this->get(self::CONFIG_MERCHANT_ID, '');
     }
 
 }
