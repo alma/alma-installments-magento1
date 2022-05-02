@@ -64,3 +64,7 @@
 "Credit cost : ","Credit cost : "
 "Total : ","Total : "
 "Payment plans configuration","Payment plans configuration"
+"Product page display","Product page display"
+"A badge can be displayed on product pages to indicate eligible payments plans","A badge can be displayed on product pages to indicate eligible payments plans"
+"Badge custom position","Badge custom position"
+"Id or class name for the custom badge container. (ex: add-to-box or qty)","Id or class name for the custom badge container. (ex: add-to-box or qty)""

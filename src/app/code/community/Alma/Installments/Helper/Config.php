@@ -46,6 +46,9 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
     const CONFIG_MERCHANT_ID = 'payment/alma_installments/merchant_id';
 
+    const WIDGET_ENABLE_PRODUCT_PAGE =  'payment/alma_installments/enable_widget_product';
+    const WIDGET_CUSTOM_POSITION =  'payment/alma_installments/custom_widget_position';
+
     public function get($field, $default = null, $storeId = null)
     {
         $value = Mage::getStoreConfig($field, $storeId);
@@ -129,6 +132,14 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     public function getMerchantId()
     {
         return $this->get(self::CONFIG_MERCHANT_ID, '');
+    }
+    public function widgetIsEnableInProductPage()
+    {
+        return $this->get(self::WIDGET_ENABLE_PRODUCT_PAGE, false);
+    }
+    public function getWidgetCustomPosition()
+    {
+        return $this->get(self::WIDGET_CUSTOM_POSITION, '');
     }
 
 }

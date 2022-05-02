@@ -52,6 +52,8 @@
                 <test_api_key backend_model="adminhtml/system_config_backend_encrypted"/>
                 <api_mode>test</api_mode>
 
+                <enable_widget_product>O</enable_widget_product>
+
                 <show_eligibility_message>1</show_eligibility_message>
                 <eligibility_message>Eligible for monthly payments</eligibility_message>
                 <non_eligibility_message>Not eligible for monthly payments</non_eligibility_message>

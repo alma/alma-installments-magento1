@@ -27,16 +27,12 @@
 
 ?>
 <?php
-/** @var $block Alma_Installments_Block_Eligibility */
+/** @var $this Alma_Installments_Block_Eligibility */
 ?>
 <?php if ($this->showEligibilityMessage() && $this->checkEligibility()): ?>
     <style>
         .alma-cart-eligibility {
             margin: 10px 0;
-        }
-
-        .alma-cart-eligibility.widget {
-            padding: 0 20px;
         }
 
         .alma-cart-eligibility img {
@@ -49,7 +45,7 @@
             display: block;
         }
     </style>
-    <div class="alma-cart-eligibility<?php echo $this->isWidget() ? ' widget' : '' ?>">
+    <div class="alma-cart-eligibility">
         <img src="<?php echo $this->getSkinUrl('alma/images/alma_logo.svg') ?>" alt="Alma">
         <span class="alma-cart-eligibility--message"><?php echo $this->getEligibilityMessage() ?></span>
     </div>

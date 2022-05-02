@@ -23,7 +23,7 @@
  *
  */
 
-class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template implements Mage_Widget_Block_Interface
+class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
 {
     /** @var Alma_Installments_Helper_Eligibility  */
     private $eligibilityHelper;
