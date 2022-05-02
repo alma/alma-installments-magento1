@@ -109,7 +109,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
                 ];
             }
         }
-        if (count($installmentsQuery) >= 1) {
+        if (!empty($installmentsQuery)) {
             try {
                 $feePlansEligibilities = $this->alma->payments->eligibility(
                     $this->formatEligibilityPayload($quote, $installmentsQuery),
