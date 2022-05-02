@@ -336,4 +336,32 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         return $feePlans;
     }
 
+
+    /**
+     * @return string
+     */
+    public function getEnableFeePlansForBadge()
+    {
+        $plansForBadge = $this->getEnabledFeePlansConfigFromBackOffice();
+        foreach ($plansForBadge as $panKey => $plan) {
+            $plansForBadge[$panKey] = $this->formatPlanForBadge($plan);
+        }
+        return json_encode(array_values($plansForBadge));
+    }
+
+    /**
+     * @param $plan
+     * @return array
+     */
+    public function formatPlanForBadge($plan)
+    {
+        return [
+            'installmentsCount'=> $plan['installments_count'],
+            'deferredDays'=> $plan['deferred_days'],
+            'deferredMonths'=> $plan['deferred_months'],
+            'minAmount'=> $plan['custom_min_purchase_amount'],
+            'maxAmount'=> $plan['custom_max_purchase_amount'],
+        ];
+    }
+
 }

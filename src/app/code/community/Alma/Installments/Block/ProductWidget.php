@@ -23,57 +23,93 @@
  *
  */
 
-class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template
+class Alma_Installments_Block_ProductWidget extends Mage_Core_Block_Template
 {
-    /** @var Alma_Installments_Helper_Eligibility  */
-    private $eligibilityHelper;
-    /** @var Alma_Installments_Helper_Availability  */
-    private $availabilityHelper;
     /** @var Alma_Installments_Helper_Config */
     private $config;
+    /**@var Alma_Installments_Helper_FeePlansHelper */
+    private $feePlansHelper;
 
-    private $isWidget = false;
-
+    /**
+     * @param array $args
+     */
     public function __construct(array $args = array())
     {
         parent::__construct($args);
-
-        $this->eligibilityHelper = Mage::helper('alma/eligibility');
-        $this->availabilityHelper = Mage::helper('alma/availability');
+        $this->feePlansHelper = Mage::helper('alma/feePlansHelper');
         $this->config = Mage::helper('alma/config');
     }
 
+    /**
+     * @return string
+     */
     protected function _toHtml()
     {
-        // We know that we're rendering as a widget when no template file is set yet
         if (empty($this->_template)) {
-            $this->_template = "alma/cart/eligibility.phtml";
-            $this->isWidget = true;
+            $this->_template = "alma/product/badge.phtml";
         }
-
         return parent::_toHtml();
     }
-    public function checkEligibility()
+    /**
+     * @return string
+     */
+    public function getMerchantId()
     {
-        return $this->eligibilityHelper->checkEligibility();
+        return $this->config->getMerchantId();
     }
 
-    public function showEligibilityMessage()
+    /**
+     * @return string
+     */
+    public function getActiveMode()
     {
-        return $this->shouldDisplay() && $this->config->showEligibilityMessage();
+        return $this->config->getActiveMode();
     }
 
-    public function getEligibilityMessage()
+    /**
+     * @return Mage_Catalog_Model_Product
+     */
+    public function getProduct()
     {
-        return $this->eligibilityHelper->getMessage();
+        return Mage::registry('product');
     }
 
-    public function shouldDisplay() {
-        return $this->availabilityHelper->isAvailable();
+    /**
+     * @return float
+     */
+    public function getFinalPrice(){
+        return Alma_Installments_Helper_Functions::priceToCents($this->getProduct()->getFinalPrice());
     }
 
-    public function isWidget()
+    /**
+     * @return array
+     */
+    public function getEnableFeePlansForBadge()
     {
-        return $this->isWidget;
+        return $this->feePlansHelper->getEnableFeePlansForBadge();
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->config->getLocale();
+    }
+
+    /**
+     * @return bool
+     */
+    public function widgetIsEnable()
+    {
+        return $this->config->widgetIsEnableInProductPage();
+    }
+
+    /**
+     * @return string
+     */
+    public function getWidgetCustomPosition()
+    {
+        return $this->config->getWidgetCustomPosition();
     }
 }

@@ -1,7 +1,7 @@
 <?php
-/** @var $this Alma_Installments_Block_Badge */
+/** @var $this Alma_Installments_Block_ProductWidget */
 ?>
-<?php if($this->widgetIsEnableOnProductPage()){?>
+<?php if($this->widgetIsEnable()){?>
 <script src="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.umd.js"></script>
 <script>
 
@@ -85,7 +85,7 @@
      * @returns {number} price in cent
      */
     function getPrice(){
-        var price = <?= $this->getProduct()->getFinalPrice()?>;
+        var price = <?= $this->getFinalPrice()?>;
         var priceContainer = getHtmlPriceContainer();
         var frontPrice = getPriceFromContainer(priceContainer);
         if( frontPrice > 0){

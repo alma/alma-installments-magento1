@@ -141,5 +141,18 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     {
         return $this->get(self::WIDGET_CUSTOM_POSITION, '');
     }
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        $locale ='en';
+        $localeStoreCode = Mage::app()->getLocale()->getLocaleCode();
+
+        if (preg_match('/^([a-z]{2})_([A-Z]{2})$/',$localeStoreCode,$matches)){
+            $locale = $matches[1];
+        }
+        return $locale;
+    }
 
 }
