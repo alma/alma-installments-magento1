@@ -93,6 +93,7 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
         $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
         $enabledFeePlansInConfig = $this->feePlansHelper->getEnabledFeePlansConfigFromBackOffice();
 
+        $feePlansEligibilities = [];
         $installmentsQuery = [];
         foreach ($enabledFeePlansInConfig as $configFeePlan) {
             if (
@@ -108,18 +109,15 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
                 ];
             }
         }
-        if (empty($installmentsQuery)) {
-            return [];
-        }
-
-        try {
-            $feePlansEligibilities = $this->alma->payments->eligibility(
-                $this->formatEligibilityPayload($quote, $installmentsQuery),
-                true
-            );
-        } catch (RequestError $e) {
-            $this->logger->error('$e',[$e->getMessage()]);
-            return [];
+        if (count($installmentsQuery) >= 1) {
+            try {
+                $feePlansEligibilities = $this->alma->payments->eligibility(
+                    $this->formatEligibilityPayload($quote, $installmentsQuery),
+                    true
+                );
+            } catch (RequestError $e) {
+                $this->logger->error('$e',[$e->getMessage()]);
+            }
         }
         return $feePlansEligibilities;
     }
