@@ -38,7 +38,7 @@ class Alma_Installments_Block_ProductWidget extends Mage_Core_Block_Template
         parent::__construct($args);
         $this->feePlansHelper = Mage::helper('alma/feePlansHelper');
         $this->config = Mage::helper('alma/config');
-        $this->logger = Mage::helper('alma/logger')->getLogger();    }
+    }
 
     /**
      * @return string
