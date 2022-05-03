@@ -63,7 +63,7 @@ class Alma_Installments_Block_CartWidget extends Mage_Core_Block_Template
      */
     public function widgetIsEnable()
     {
-        return ($this->config->showEligibilityMessage() && $this->config->isActive());
+        return $this->config->showWidget();
     }
 
     /**

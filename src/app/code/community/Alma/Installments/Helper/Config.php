@@ -155,4 +155,9 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return $locale;
     }
 
+    public function showWidget()
+    {
+        return ($this->widgetIsEnableInProductPage() && $this->isActive());
+    }
+
 }
