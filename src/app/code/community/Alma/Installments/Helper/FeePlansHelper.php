@@ -48,10 +48,15 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      * @var Mage_Core_Helper_String
      */
     private $unserializeArrayHelper;
+    /**
+     * @var Alma_Installments_Helper_AlmaClient
+     */
+    private $almaHelper;
 
     public function __construct()
     {
-        $this->almaClient = Mage::helper('alma/AlmaClient')->getDefaultClient();
+        $this->almaHelper = Mage::helper('alma/AlmaClient');
+        $this->almaClient = $this->almaHelper->getDefaultClient();
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->functionsHelper = Mage::helper('alma/Functions');
         $this->unserializeArrayHelper = Mage::helper('core/unserializeArray');
@@ -67,7 +72,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         } catch (\Exception $e) {
             $this->logger->error('Get Alma Fee plans :', [$e->getMessage()]);
         }
-        $this->saveMerchantId($almaFeePlans);
+        $this->almaHelper->saveMerchantId($almaFeePlans);
         $this->unsetOneInstallmentPlan($almaFeePlans);
         return $almaFeePlans;
     }
@@ -128,19 +133,6 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
             if ($almaFeePlan->getPlanKey() == self::ONE_INSTALLMENT_KEY){
                 unset($almaFeePlans[$index]);
             }
-        }
-    }
-    /**
-     * @param $almaFeePlans (warning reference)
-     * @return void
-     */
-    public function saveMerchantId($almaFeePlans)
-    {
-            $this->logger->info('$almaFeePlans',[$almaFeePlans]);
-            $this->logger->info('$almaFeePlans[0]',[$almaFeePlans[0]]);
-        if($almaFeePlans[0]){
-            $this->logger->info('$almaFeePlans[0]->merchant',[$almaFeePlans[0]->merchant]);
-            Mage::getConfig()->saveConfig(Alma_Installments_Helper_Config::CONFIG_MERCHANT_ID,$almaFeePlans[0]->merchant);
         }
     }
 

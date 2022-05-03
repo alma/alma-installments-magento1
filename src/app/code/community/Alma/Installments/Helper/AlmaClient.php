@@ -77,4 +77,15 @@ class Alma_Installments_Helper_AlmaClient extends Mage_Core_Helper_Abstract
     {
         return (string)Mage::getConfig()->getNode()->modules->Alma_Installments->version;
     }
+
+    /**
+     * @param $almaFeePlans (warning reference)
+     * @return void
+     */
+    public function saveMerchantId($almaFeePlans)
+    {
+        if($almaFeePlans[0]){
+            Mage::getConfig()->saveConfig(Alma_Installments_Helper_Config::CONFIG_MERCHANT_ID,$almaFeePlans[0]->merchant);
+        }
+    }
 }
