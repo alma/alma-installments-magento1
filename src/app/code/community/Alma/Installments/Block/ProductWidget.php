@@ -102,7 +102,7 @@ class Alma_Installments_Block_ProductWidget extends Mage_Core_Block_Template
      */
     public function widgetIsEnable()
     {
-        return $this->config->widgetIsEnableInProductPage();
+        return ($this->config->showEligibilityMessage() && $this->config->isActive());
     }
 
     /**
