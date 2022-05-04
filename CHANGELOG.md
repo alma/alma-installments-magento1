@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v2.1.0
+------
+
+* Pay >4 and Paylater
+* Eligibility V2
+* Widget on product page
+* Widget on cart page
+
 v2.0.0
 ------
 
