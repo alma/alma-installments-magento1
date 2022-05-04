@@ -25,6 +25,14 @@
  */
 -->
 <layout>
+    <default>
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_css</type>
+                <name>alma/css/alma.css</name>
+            </action>
+        </reference>
+    </default>
     <checkout_cart_index>
         <reference name="content">
             <reference name="checkout.cart">
@@ -37,7 +45,6 @@
     <checkout_onepage_paymentmethod>
         <remove name="right"/>
         <remove name="left"/>
-
         <block type="checkout/onepage_payment_methods" name="root" output="toHtml" template="alma/checkout/methods.phtml">
             <action method="setMethodFormTemplate"><method>purchaseorder</method><template>payment/form/purchaseorder.phtml</template></action>
         </block>

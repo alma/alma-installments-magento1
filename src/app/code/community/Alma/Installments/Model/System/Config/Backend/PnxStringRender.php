@@ -1,6 +1,6 @@
 <?php
 /**
- * 2018 Alma / Nabla SAS
+ * 2018-2019 Alma SAS
  *
  * THE MIT LICENSE
  *
@@ -17,40 +17,23 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  *
- * @author    Alma / Nabla SAS <contact@getalma.eu>
- * @copyright 2018 Alma / Nabla SAS
+ * @author    Alma SAS <contact@getalma.eu>
+ * @copyright 2018-2019 Alma SAS
  * @license   https://opensource.org/licenses/MIT The MIT License
- *
  */
 
-// @codingStandardsIgnoreFile
-
-?>
-<?php
-/** @var $block Alma_Installments_Block_Eligibility */
-?>
-<?php if ($this->showEligibilityMessage() && $this->checkEligibility()): ?>
-    <style>
-        .alma-cart-eligibility {
-            margin: 10px 0;
-        }
-
-        .alma-cart-eligibility.widget {
-            padding: 0 20px;
-        }
-
-        .alma-cart-eligibility img {
-            display: inline;
-            vertical-align: middle;
-            height: 25px;
-        }
-
-        .alma-cart-eligibility.widget img {
-            display: block;
-        }
-    </style>
-    <div class="alma-cart-eligibility<?php echo $this->isWidget() ? ' widget' : '' ?>">
-        <img src="<?php echo $this->getSkinUrl('alma/images/alma_logo.svg') ?>" alt="Alma">
-        <span class="alma-cart-eligibility--message"><?php echo $this->getEligibilityMessage() ?></span>
-    </div>
-<?php endif; ?>
+class Alma_Installments_Model_System_Config_Backend_PnxStringRender  extends Mage_Core_Block_Abstract
+{
+    /**
+     * Render output
+     *
+     * @return string
+     */
+    protected function _toHtml()
+    {
+        $html = '<div style="'.$this->getColumn()['style'].'">';
+        $html .= '#{' . $this->getColumnName() .'}';
+        $html .= '</div>';
+        return  $html;
+    }
+}

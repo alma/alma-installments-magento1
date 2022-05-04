@@ -29,6 +29,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
     protected $_code = self::CODE;
 
 	const PAYMENT_INFO_ID = 'alma_payment_id';
+	const ADDITIONAL_DATA_LABEL = 'plan_key';
 	const PAYMENT_INFO_INSTALLMENTS_COUNT = 'alma_installments_count';
 
 	protected $_canManageRecurringProfiles  = false;
@@ -50,7 +51,7 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
 
     public function assignData($data)
     {
-        $this->getInfoInstance()->setAdditionalInformation('installments_count', $data->getData('installments_count'));
+        $this->getInfoInstance()->setAdditionalInformation(self::ADDITIONAL_DATA_LABEL, $data->getData(self::ADDITIONAL_DATA_LABEL));
         return parent::assignData($data);
     }
 
@@ -81,10 +82,14 @@ class Alma_Installments_Model_PaymentMethod extends Mage_Payment_Model_Method_Ab
         $stateObject->setStatus('pending_payment');
         $stateObject->setIsNotified(false);
 
+        $planKey = $payment->getAdditionalInformation(self::ADDITIONAL_DATA_LABEL);
+        preg_match('/^general_([\d]{1,2})_([\d]{1,2})_([\d]{1,2})$/',$planKey,$matches);
         $data = array(
             "payment" => array(
                 "return_url" => Mage::getUrl('alma/payment/return'),
-                "installments_count" => (int)$payment->getAdditionalInformation('installments_count'),
+                "installments_count" => (int)$matches[1],
+                "deferred_days" => (int)$matches[2],
+                "deferred_months" => (int)$matches[3],
                 "ipn_callback_url" => Mage::getUrl('alma/payment/ipn'),
                 "customer_cancel_url" => Mage::getUrl('alma/payment/cancel'),
                 "purchase_amount" => Alma_Installments_Helper_Functions::priceToCents((float)$order->getTotalDue()),

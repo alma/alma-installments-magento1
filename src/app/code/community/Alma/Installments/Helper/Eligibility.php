@@ -27,143 +27,133 @@ use Alma\API\RequestError;
 
 class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
 {
-    /** @var Alma_Installments_Helper_Config */
+    const MAGE_CART_KEY = 'checkout/cart';
+
+    /**
+     * @var Mage_Core_Helper_Abstract|null
+     */
     private $config;
-    /** @var \Alma\API\Client  */
+    /**
+     * @var \Alma\API\Client
+     */
     private $alma;
-    /** @var AlmaLogger */
+    /**
+     * @var AlmaLogger
+     */
     private $logger;
-
-    /** @var bool */
-    private $eligible;
-    /** @var array */
-	private $eligibilities;
-
-    /** @var string */
-    private $message;
+    /**
+     * @var Alma_Installments_Helper_FeePlansHelper
+     */
+    private $feePlansHelper;
+    /**
+     * @var array
+     */
+    private $currentEligibleFeePlans;
+    /**
+     * @var bool
+     */
+    private $eligibleFeePlansAreLoaded;
 
     public function __construct()
     {
         $this->logger = Mage::helper('alma/logger')->getLogger();
-        $this->config = Mage::helper('alma/config');
         $this->alma = Mage::helper('alma/AlmaClient')->getDefaultClient();
-        $this->eligibilities = array();
+        $this->config = Mage::helper('alma/config');
+        $this->feePlansHelper = Mage::helper('alma/FeePlansHelper');
+        $this->currentEligibleFeePlans = array();
+        $this->eligibleFeePlansAreLoaded = false;
+    }
+
+    /**
+     * @return Alma\API\Endpoints\Results\Eligibility[]
+     * @throws Mage_Core_Exception
+     */
+    public function getEligibleFeePlans()
+    {
+       if($this->eligibleFeePlansAreLoaded){
+           return $this->currentEligibleFeePlans;
+       }
+        $feePlansEligibilities = $this->loadEligibleFeePlansFromApi();
+        $eligibleFeePlans = $this->filterEligibleFeePlans($feePlansEligibilities);
+        $this->eligibleFeePlansAreLoaded = true;
+        $this->currentEligibleFeePlans = $eligibleFeePlans;
+        return $eligibleFeePlans;
+    }
+
+    /**
+     * @return Alma\API\Endpoints\Results\Eligibility[]
+     * @throws Mage_Core_Exception|Exception
+     */
+    private function loadEligibleFeePlansFromApi()
+    {
+        if(!$this->checkEligibilityPrerequisite()){
+            return [];
+        }
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
+        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
+        $enabledFeePlansInConfig = $this->feePlansHelper->getEnabledFeePlansConfigFromBackOffice();
+
+        $feePlansEligibilities = [];
+        $installmentsQuery = [];
+        foreach ($enabledFeePlansInConfig as $configFeePlan) {
+            if (
+                $cartTotal >= $configFeePlan[Alma_Installments_Helper_FeePlansHelper::MIN_DISPLAY_KEY] &&
+                $cartTotal <= $configFeePlan[Alma_Installments_Helper_FeePlansHelper::MAX_DISPLAY_KEY]
+            ){
+                $installmentsQuery[] = [
+                    'purchase_amount' => $cartTotal,
+                    'installments_count' => $configFeePlan['installments_count'],
+                    'deferred_days' => $configFeePlan['deferred_days'],
+                    'deferred_month' => $configFeePlan['deferred_months'],
+                    'cart_total' => $cartTotal,
+                ];
+            }
+        }
+        if (!empty($installmentsQuery)) {
+            try {
+                $feePlansEligibilities = $this->alma->payments->eligibility(
+                    $this->formatEligibilityPayload($quote, $installmentsQuery),
+                    true
+                );
+            } catch (RequestError $e) {
+                $this->logger->error('$e',[$e->getMessage()]);
+            }
+        }
+        return $feePlansEligibilities;
+    }
+
+    /**
+     * @param Alma\API\Endpoints\Results\Eligibility[] $feePlansEligibilities
+     * @return Alma\API\Endpoints\Results\Eligibility[]
+     */
+    private function filterEligibleFeePlans($feePlansEligibilities){
+        $eligibleFeePlans = [];
+        foreach ($feePlansEligibilities as $planKey => $feePlansEligibility) {
+            if ($feePlansEligibility->isEligible()){
+                $eligibleFeePlans[$planKey]=$feePlansEligibility;
+            }
+        }
+        return $eligibleFeePlans;
     }
 
     /**
      * @return bool
      */
     public function checkEligibility() {
-        $eligibilityMessage = $this->config->getEligibilityMessage();
-        $nonEligibilityMessage = $this->config->getNonEligibilityMessage();
-        $excludedProductsMessage = $this->config->getExcludedProductsMessage();
-
-        if (!$this->alma) {
-            $this->eligible = false;
-            return false;
+        $isEligible = false;
+        $eligibleFeePlans = $this->getEligibleFeePlans();
+        if(count($eligibleFeePlans)){
+            $isEligible = true;
         }
-
-        if (!$this->checkItemsTypes()) {
-            $this->eligible = false;
-            $this->message = $nonEligibilityMessage . '<br>' . $excludedProductsMessage;
-            return false;
-        }
-
-        /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
-        if(!$quote) {
-            $this->eligible = false;
-            return false;
-        }
-
-        $this->message = $eligibilityMessage;
-        $cartTotal = Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal());
-
-        // Check that the amount is within any merchant-activated fee plan bounds
-		$installmentsCounts = array();
-		$enabledInstallmentsCounts = $this->config->enabledInstallmentsCounts();
-
-		foreach ($enabledInstallmentsCounts as $n) {
-			$min = $this->config->pnxMinAmount($n);
-			$max = $this->config->pnxMaxAmount($n);
-
-			if ($cartTotal >= $min && $cartTotal <= $max) {
-				$installmentsCounts[] = $n;
-			}
-		}
-
-		// Check that the in-bound amount is also deemed eligible by our API
-		if (!empty($installmentsCounts)) {
-			$requestData = Alma_Installments_Model_Data_Quote::dataFromQuote($quote, $installmentsCounts);
-
-			try {
-				$this->eligibilities = $this->alma->payments->eligibility($requestData);
-			} catch (RequestError $e) {
-				$this->logger->error("Error checking payment eligibility: {$e->getMessage()}");
-				$this->eligible = false;
-				$this->message = $nonEligibilityMessage;
-				return false;
-			}
-		}
-
-
-
-        if (empty($installmentsCounts) || (isset($eligibilities) && !$this->hasAnyEligible($eligibilities))) {
-            $this->eligible = false;
-            $this->message = $nonEligibilityMessage;
-
-            $minAmount = min(array_map(array($this->config, 'pnxMinAmount'), $enabledInstallmentsCounts));
-            $maxAmount = max(array_map(array($this->config, 'pnxMaxAmount'), $enabledInstallmentsCounts));
-
-            if ($cartTotal < $minAmount || $cartTotal > $maxAmount) {
-                if ($cartTotal > $maxAmount) {
-                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($maxAmount));
-                    $this->message .= ' ' . sprintf($this->__('(Maximum amount: %s)'), $price);
-                } else {
-                    $price = $this->getFormattedPrice(Alma_Installments_Helper_Functions::priceFromCents($minAmount));
-                    $this->message .= ' ' . sprintf($this->__('(Minimum amount: %s)'), $price);
-                }
-            }
-        } else {
-            $this->eligible = true;
-        }
-
-        return $this->eligible;
+        return $isEligible;
     }
 
-    private function hasAnyEligible($eligibilities) {
-    	foreach ($eligibilities as $eligibility) {
-    		if ($eligibility->isEligible) {
-    			return true;
-			}
-		}
-
-    	return false;
-	}
-
-    public function isEligible($n = null)
-    {
-    	if ($n === null) {
-			return $this->eligible;
-		} else {
-			foreach ($this->eligibilities as $eligibility) {
-				if ($eligibility->installmentsCount === $n && $eligibility->isEligible) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-
+    /**
+     * @return string
+     */
     public function getMessage()
     {
-        return $this->message;
-    }
-
-    private function getFormattedPrice($price)
-    {
-        return Mage::helper('core')->currency($price, true, false);
+        return $this->config->getEligibilityMessage();
     }
 
     /**
@@ -172,16 +162,53 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     private function checkItemsTypes()
     {
         /** @var Mage_Sales_Model_Quote $quote */
-        $quote = Mage::helper('checkout/cart')->getQuote();
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
         $excludedProductTypes = $this->config->getExcludedProductTypes();
 
         /** @var Mage_Sales_Model_Quote_Item $item */
         foreach ($quote->getAllItems() as $item) {
             if (in_array($item->getRealProductType(), $excludedProductTypes)) {
+                $this->logger->error('A product is in excluded product type list',[]);
                 return false;
             }
         }
+        return true;
+    }
 
+    /**
+     * @param $quote
+     * @param $installmentsQuery
+     * @return array
+     */
+    private function formatEligibilityPayload($quote,$installmentsQuery)
+    {
+        return [
+        'online'          => 'online',
+        'purchase_amount' => Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal()),
+        'locale'          => Mage::app()->getLocale()->getLocaleCode(),
+        'queries'         => $installmentsQuery,
+         ];
+    }
+
+    /**
+     * @return bool
+     */
+    private function checkEligibilityPrerequisite()
+    {
+        if (!$this->alma) {
+            $this->logger->error('Alma client is not define',[]);
+            return false;
+        }
+        /** @var Mage_Sales_Model_Quote $quote */
+        $quote = Mage::helper(self::MAGE_CART_KEY)->getQuote();
+        if(!$quote) {
+            $this->logger->error('Quote is not define ',[]);
+            return false;
+        }
+
+        if(!$this->checkItemsTypes()){
+            return false ;
+        }
         return true;
     }
 }

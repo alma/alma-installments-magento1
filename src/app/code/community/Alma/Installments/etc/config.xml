@@ -58,14 +58,30 @@
 
                 <title>Monthly Payments with Alma</title>
                 <description>Pay in 3 monthly payments with your credit card.</description>
-
-                <p2x_enabled>0</p2x_enabled>
-                <p3x_enabled>1</p3x_enabled>
-                <p4x_enabled>0</p4x_enabled>
             </alma_installments>
         </payment>
     </default>
     <global>
+        <resources>
+            <alma_installments_setup>
+                <setup>
+                    <module>Alma_Installments</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </alma_installments_setup>
+            <alma_installments_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </alma_installments_write>
+            <alma_installments_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </alma_installments_read>
+        </resources>
         <helpers>
             <Alma_Installments>
                 <class>Alma_Installments_Helper</class>

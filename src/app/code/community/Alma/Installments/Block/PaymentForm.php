@@ -26,41 +26,104 @@
 class Alma_Installments_Block_PaymentForm extends Mage_Payment_Block_Form
 {
     /**
-     * @var Alma_Installments_Helper_Config
+     * @var Alma_Installments_Helper_Eligibility
      */
-    private $config;
-	private $eligibilityHelper;
+    private $eligibilityHelper;
+    /**
+     * @var Alma_Installments_Helper_Logger
+     */
+    private $logger;
+    /**
+     * @var Alma_Installments_Helper_Functions
+     */
+    private $functionsHelper;
 
-	protected function _construct()
+    /**
+     * @return void
+     */
+    protected function _construct()
     {
         parent::_construct();
         $this->setTemplate('alma/payment_form.phtml');
-
-        $this->config = Mage::helper('alma/config');
+        $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->eligibilityHelper = Mage::helper('alma/eligibility');
+        $this->functionsHelper = Mage::helper('alma/Functions');
+        $this->quote = Mage::helper('checkout/cart')->getQuote();
     }
 
-    public function availableInstallmentsCounts()
+    /**
+     * @return array
+     */
+    public function getEligibleFeePlans(){
+        $eligibleFeePlans = [];
+        try {
+            $eligibleFeePlans = $this->eligibilityHelper->getEligibleFeePlans();
+        } catch (Exception $e) {
+            $this->logger->error('Get Alma fee plans eligibility exception : ',[$e->getMessage()]);
+        }
+        return $eligibleFeePlans;
+    }
+
+    /**
+     * @param int $timestamp
+     * @return string
+     */
+    public function timestampToLocaleDate($timestamp)
     {
-    	$availableInstallmentsCounts = array();
-    	foreach ($this->config->enabledInstallmentsCounts() as $n) {
-			if ($this->eligibilityHelper->isEligible($n)) {
-				$availableInstallmentsCounts[] = $n;
-			}
-		}
-
-    	return $availableInstallmentsCounts;
+        return Mage::app()->getLocale()->date($timestamp)->toString(Zend_Date::DATE_MEDIUM);
     }
 
-	public function defaultInstallmentsCount()
-	{
-		$availableInstallmentsCounts = $this->availableInstallmentsCounts();
-
-		if (in_array(3, $availableInstallmentsCounts)) {
-			return 3;
-		} else {
-			$n = $availableInstallmentsCounts[count($availableInstallmentsCounts) - 1];
-			return $n;
-		}
+    /**
+     * @param int $cents
+     * @return mixed
+     */
+    public function convertCentToPrice($cents)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($cents), true, false);
     }
+
+    /**
+     * @param int $fee
+     * @return string
+     */
+    public function getFeeLabel($fee)
+    {
+        return sprintf(__('Including fees: %s'),Mage::helper('core')->currency($this->functionsHelper->priceFromCents($fee)));
+    }
+
+    /**
+     * @return string
+     */
+    public function getCartTotal()
+    {
+        return Mage::helper('core')->currency($this->quote->getGrandTotal());
+    }
+
+    /**
+     * @param $annualInterestRate
+     * @return string
+     */
+    public function getAnnualInterestRate($annualInterestRate)
+    {
+        return $annualInterestRate/100 .'%' ;
+    }
+
+    /**
+     * @param int $creditCost
+     * @return string
+     */
+    public function getCreditCost($creditCost)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($creditCost));
+    }
+
+    /**
+     * @param int $creditCost
+     * @return string
+     */
+    public function getTotalPaid($creditCost)
+    {
+        return Mage::helper('core')->currency($this->functionsHelper->priceFromCents($creditCost)+$this->quote->getGrandTotal());
+    }
+
 }
