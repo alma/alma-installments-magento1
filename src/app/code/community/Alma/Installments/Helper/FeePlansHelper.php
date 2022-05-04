@@ -37,7 +37,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
 
     private $almaClient;
     /**
-     * @var Alma_Installments_Helper_AlmaClient
+     * @var Alma_Installments_Helper_Logger
      */
     private $logger;
     /**
@@ -48,10 +48,15 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      * @var Mage_Core_Helper_String
      */
     private $unserializeArrayHelper;
+    /**
+     * @var Alma_Installments_Helper_AlmaClient
+     */
+    private $almaHelper;
 
     public function __construct()
     {
-        $this->almaClient = Mage::helper('alma/AlmaClient')->getDefaultClient();
+        $this->almaHelper = Mage::helper('alma/AlmaClient');
+        $this->almaClient = $this->almaHelper->getDefaultClient();
         $this->logger = Mage::helper('alma/logger')->getLogger();
         $this->functionsHelper = Mage::helper('alma/Functions');
         $this->unserializeArrayHelper = Mage::helper('core/unserializeArray');
@@ -67,6 +72,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
         } catch (\Exception $e) {
             $this->logger->error('Get Alma Fee plans :', [$e->getMessage()]);
         }
+        $this->almaHelper->saveMerchantId($almaFeePlans);
         $this->unsetOneInstallmentPlan($almaFeePlans);
         return $almaFeePlans;
     }
@@ -320,6 +326,35 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
             }
         }
         return $feePlans;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getEnableFeePlansForBadge()
+    {
+        $enableFeePlansFromBackOffice = $this->getEnabledFeePlansConfigFromBackOffice();
+        $plansForBadge = [];
+        foreach ($enableFeePlansFromBackOffice as $plan) {
+            $plansForBadge[] = $this->formatPlanForBadge($plan);
+        }
+        return json_encode($plansForBadge);
+    }
+
+    /**
+     * @param $plan
+     * @return array
+     */
+    public function formatPlanForBadge($plan)
+    {
+        return [
+            'installmentsCount'=> $plan['installments_count'],
+            'deferredDays'=> $plan['deferred_days'],
+            'deferredMonths'=> $plan['deferred_months'],
+            'minAmount'=> $plan['custom_min_purchase_amount'],
+            'maxAmount'=> $plan['custom_max_purchase_amount'],
+        ];
     }
 
 }

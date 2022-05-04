@@ -33,7 +33,7 @@
     </modules>
     <default>
         <payment>
-            <alma_installments translate="excluded_products_message eligibility_message non_eligibility_message title description" module="Alma_Installments">
+            <alma_installments translate="excluded_products_message title description" module="Alma_Installments">
                 <model>alma/PaymentMethod</model>
 
                 <active>1</active>
@@ -52,9 +52,9 @@
                 <test_api_key backend_model="adminhtml/system_config_backend_encrypted"/>
                 <api_mode>test</api_mode>
 
-                <show_eligibility_message>1</show_eligibility_message>
-                <eligibility_message>Eligible for monthly payments</eligibility_message>
-                <non_eligibility_message>Not eligible for monthly payments</non_eligibility_message>
+                <enable_widget_product>O</enable_widget_product>
+                <enable_widget_cart>0</enable_widget_cart>
+
 
                 <title>Monthly Payments with Alma</title>
                 <description>Pay in 3 monthly payments with your credit card.</description>

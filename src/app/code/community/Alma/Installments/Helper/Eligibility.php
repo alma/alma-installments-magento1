@@ -176,18 +176,27 @@ class Alma_Installments_Helper_Eligibility extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * @param $quote
+     * @param Mage_Sales_Model_Quote $quote
      * @param $installmentsQuery
      * @return array
      */
     private function formatEligibilityPayload($quote,$installmentsQuery)
     {
-        return [
+        $BillingAddressCountryId = $quote->getBillingAddress()->getCountryId();
+        $shippingAddressCountryId = $quote->getShippingAddress()->getCountryId();
+        $payload = [
         'online'          => 'online',
         'purchase_amount' => Alma_Installments_Helper_Functions::priceToCents((float)$quote->getGrandTotal()),
         'locale'          => Mage::app()->getLocale()->getLocaleCode(),
         'queries'         => $installmentsQuery,
          ];
+        if(!empty($BillingAddressCountryId)){
+            $payload['billing_address'] = ['country' => $BillingAddressCountryId];
+        }
+        if(!empty($shippingAddressCountryId)){
+            $payload['shipping_address'] = ['country' => $shippingAddressCountryId];
+        }
+        return $payload;
     }
 
     /**

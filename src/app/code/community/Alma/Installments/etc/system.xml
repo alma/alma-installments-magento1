@@ -111,11 +111,44 @@
                                 </excluded_products_message>
                             </fields>
                         </general_configuration>
+                        <product_page_display type="group" translate="label comment">
+                        <expanded>1</expanded>
+                        <label>Product page display</label>
+                        <comment>A widget can be displayed on product pages to indicate eligible payments plans</comment>
+                        <frontend_type>text</frontend_type>
+                        <sort_order>90</sort_order>
+                        <show_in_default>1</show_in_default>
+                        <show_in_website>1</show_in_website>
+                        <show_in_store>1</show_in_store>
+                        <fields>
+                            <enable_widget_product_page transalte="label">
+                                <label>Enabled</label>
+                                <config_path>payment/alma_installments/enable_widget_product</config_path>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <sort_order>91</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </enable_widget_product_page>
+                            <widget_custom_position translate="label comment">
+                                <config_path>payment/alma_installments/custom_widget_position</config_path>
+                                <label>Widget custom position</label>
+                                <comment>Id or class name for the custom widget container. (ex: add-to-box or qty)</comment>
+                                <frontend_type>text</frontend_type>
+                                <sort_order>92</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </widget_custom_position>
+                        </fields>
+
+                        </product_page_display>
 
                         <cart_display type="group" translate="label comment">
                             <expanded>1</expanded>
                             <label>Cart display</label>
-                            <comment>A message can be displayed in the cart and minicart to indicate the order eligibility for monthly payments</comment>
+                            <comment>A widget can be displayed in the cart to indicate the order eligibility for monthly payments</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
@@ -123,36 +156,16 @@
                             <show_in_store>1</show_in_store>
 
                             <fields>
-                                <show_eligibility_message translate="label">
-                                    <config_path>payment/alma_installments/show_eligibility_message</config_path>
-                                    <label>Display cart eligibility message</label>
+                                <enable_widget_cart translate="label">
+                                    <config_path>payment/alma_installments/enable_widget_cart</config_path>
+                                    <label>Display widget on cart page</label>
                                     <frontend_type>select</frontend_type>
                                     <source_model>adminhtml/system_config_source_yesno</source_model>
                                     <sort_order>101</sort_order>
                                     <show_in_default>1</show_in_default>
                                     <show_in_website>1</show_in_website>
                                     <show_in_store>1</show_in_store>
-                                </show_eligibility_message>
-
-                                <eligibility_message translate="label">
-                                    <config_path>payment/alma_installments/eligibility_message</config_path>
-                                    <label>Eligibility message</label>
-                                    <frontend_type>text</frontend_type>
-                                    <sort_order>102</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>1</show_in_store>
-                                </eligibility_message>
-
-                                <non_eligibility_message translate="label">
-                                    <config_path>payment/alma_installments/non_eligibility_message</config_path>
-                                    <label>Non-eligibility message</label>
-                                    <frontend_type>text</frontend_type>
-                                    <sort_order>103</sort_order>
-                                    <show_in_default>1</show_in_default>
-                                    <show_in_website>1</show_in_website>
-                                    <show_in_store>1</show_in_store>
-                                </non_eligibility_message>
+                                </enable_widget_cart>
                             </fields>
                         </cart_display>
 

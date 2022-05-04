@@ -1,0 +1,167 @@
+<?php
+/** @var $this Alma_Installments_Block_ProductWidget */
+?>
+<?php if($this->widgetIsEnable()){?>
+<script src="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.umd.js"></script>
+<script>
+
+    /**
+     * @description  Wait for end of Dom loading / qty is not load immediately
+     */
+    window.addEventListener('DOMContentLoaded', () => {
+        moveToCustomPosition();
+        addListenerToQty();
+        addListenerToPrice();
+        updateWidget();
+    });
+
+    /**
+     * @description  Init alma
+     */
+    var widgets = Alma.Widgets.initialize(
+        '<?= $this->getMerchantId() ?>',
+        Alma.ApiMode.<?=strtoupper($this->getActiveMode())?>,
+    )
+
+</script>
+    <div id="alma-widget"></div>
+<?php } ?>
+
+<script>
+
+    /**
+     *  @description Update widget function
+     */
+    function updateWidget(){
+        widgets.add(
+            Alma.Widgets.PaymentPlans, {
+                container: '#alma-widget',
+                purchaseAmount: getPrice(),
+                locale: '<?= $this->getLocale() ?>',
+                plans: <?= $this->getEnableFeePlansForBadge() ?>
+            }
+        );
+    }
+
+    /**
+     * @description Change widget position
+     */
+    function moveToCustomPosition(){
+        var customPositionName = '<?= $this->getWidgetCustomPosition()?>';
+        if(customPositionName !== '' ){
+            var customPosition = document.getElementById(customPositionName);
+            if (customPosition == null && document.getElementsByClassName(customPositionName).length > 0 ){
+                customPosition = document.getElementsByClassName(customPositionName)[0]
+            }
+            if (customPosition == null) {
+                console.log('Badge custom position warning : ' + customPositionName + ' not exist')
+            } else {
+                let theFirstChild = customPosition.firstChild
+                customPosition.insertBefore(document.getElementById('alma-widget'), theFirstChild);
+            }
+        }
+    }
+
+    /**
+     *  @description Add listener on quantity field.
+     */
+    function addListenerToQty(){
+        var qtyNode = document.getElementById('qty');
+        qtyNode.addEventListener("input",updateWidget);
+    }
+
+    /**
+     *  @description Add listener on price field for configurable products.
+     */
+    function addListenerToPrice(){
+        var priceContainer = getHtmlPriceContainer();
+        priceContainer.on('DOMSubtreeModified', updateWidget);
+    }
+
+    /**
+     *
+     * @returns {number} price in cent
+     */
+    function getPrice(){
+        var price = <?= $this->getFinalPrice()?>;
+        var priceContainer = getHtmlPriceContainer();
+        var frontPrice = getPriceFromContainer(priceContainer);
+        if( frontPrice > 0){
+            price = frontPrice;
+        }
+        return price ;
+    }
+
+    /**
+     *
+     * @returns {*}
+     */
+    function getHtmlPriceContainer(){
+        var productId = <?= $this->getProduct()->getId() ?>;
+        var priceContainer = document.getElementById(`product-price-${productId}`);
+        if (priceContainer == null){
+            // Only if tax config is diplay with and without tax
+            priceContainer = document.getElementById(`price-including-tax-product-price-${productId}`);
+        }
+        return priceContainer;
+    }
+
+    /**
+     *
+     * @param priceContainer Container with the price to extract
+     * @returns {number} price in cent
+     */
+    function getPriceFromContainer(priceContainer){
+        var price = 0;
+        if(priceContainer && 'innerText' in priceContainer && priceContainer.innerText !== null)
+        {
+            price = getPricePerQty(convertHtmlPriceToCent(priceContainer.innerText));
+        }
+        return price;
+    }
+
+    /**
+     *
+     * @param {number} priceInCent Html price in cent
+     * @returns {number} final price for qty
+     */
+    function getPricePerQty(priceInCent){
+        var blockQty = document.getElementById('qty');
+        var qty = 1;
+        if(blockQty != null){
+            var qtyValue = blockQty.value
+            if(qtyValue.match(/^\d+$/))
+            {
+                qty = qtyValue.match(/^\d+$/);
+            }
+        }
+
+
+        return priceInCent * qty;
+    }
+
+    /**
+     *
+     * @param priceHtml The price extracted from HTML
+     * @returns {number} price in cent
+     */
+    function convertHtmlPriceToCent(priceHtml){
+        var centMultiplier = getCentMultiplier(priceHtml);
+        var price = priceHtml.replace(/[^\d]/g,"");
+        return price * centMultiplier;
+    }
+
+    /**
+     *
+     * @param   {string} priceHtml The price extracted from HTML
+     * @returns {number} 1 for flaot or 100 for integer
+     */
+    function getCentMultiplier(priceHtml){
+        var multiplier = 1;
+        var countSeparator = priceHtml.match(/[.,]/g) || [];
+        if (countSeparator.length === 0 || (countSeparator.length === 1 && (/[.,][\d]{3}/g).test(priceHtml))){
+            multiplier = 100;
+        }
+        return multiplier;
+    }
+</script>

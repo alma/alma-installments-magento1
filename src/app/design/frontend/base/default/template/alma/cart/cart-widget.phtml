@@ -27,30 +27,35 @@
 
 ?>
 <?php
-/** @var $block Alma_Installments_Block_Eligibility */
+/** @var $this Alma_Installments_Block_CartWidget */
 ?>
-<?php if ($this->showEligibilityMessage() && $this->checkEligibility()): ?>
-    <style>
-        .alma-cart-eligibility {
-            margin: 10px 0;
+<?php if ($this->widgetIsEnable()): ?>
+    <script src="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.umd.js"></script>
+    <script>
+
+        /**
+         * @description  Wait for end of Dom loading / qty is not load immediately
+         */
+        window.addEventListener('DOMContentLoaded', updateWidget);
+
+        /**
+         * @description  Init alma
+         */
+        var widgets = Alma.Widgets.initialize(
+            '<?= $this->getMerchantId() ?>',
+            Alma.ApiMode.<?=strtoupper($this->getActiveMode())?>,
+        )
+        function updateWidget(){
+            widgets.add(
+                Alma.Widgets.PaymentPlans, {
+                    container: '#alma-widget',
+                    purchaseAmount: '<?= $this->getFinalPrice() ?>',
+                    locale: '<?= $this->getLocale() ?>',
+                    plans: <?= $this->getEnableFeePlansForBadge() ?>
+                }
+            );
         }
 
-        .alma-cart-eligibility.widget {
-            padding: 0 20px;
-        }
-
-        .alma-cart-eligibility img {
-            display: inline;
-            vertical-align: middle;
-            height: 25px;
-        }
-
-        .alma-cart-eligibility.widget img {
-            display: block;
-        }
-    </style>
-    <div class="alma-cart-eligibility<?php echo $this->isWidget() ? ' widget' : '' ?>">
-        <img src="<?php echo $this->getSkinUrl('alma/images/alma_logo.svg') ?>" alt="Alma">
-        <span class="alma-cart-eligibility--message"><?php echo $this->getEligibilityMessage() ?></span>
-    </div>
+    </script>
+    <div id="alma-widget"></div>
 <?php endif; ?>

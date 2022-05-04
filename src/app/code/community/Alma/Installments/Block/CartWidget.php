@@ -23,57 +23,83 @@
  *
  */
 
-class Alma_Installments_Block_Eligibility extends Mage_Core_Block_Template implements Mage_Widget_Block_Interface
+class Alma_Installments_Block_CartWidget extends Mage_Core_Block_Template
 {
-    /** @var Alma_Installments_Helper_Eligibility  */
-    private $eligibilityHelper;
-    /** @var Alma_Installments_Helper_Availability  */
-    private $availabilityHelper;
+
     /** @var Alma_Installments_Helper_Config */
     private $config;
+    /** @var Mage_Checkout_Helper_Cart */
+    private  $quoteHelper;
+    /** @var Alma_Installments_Helper_FeePlansHelper */
+    private $feePlansHelper;
+    /** @var Mage_Sales_Model_Quote */
+    private $quote;
 
-    private $isWidget = false;
 
     public function __construct(array $args = array())
     {
         parent::__construct($args);
 
-        $this->eligibilityHelper = Mage::helper('alma/eligibility');
-        $this->availabilityHelper = Mage::helper('alma/availability');
+        $this->feePlansHelper = Mage::helper('alma/feePlansHelper');
+        $this->quoteHelper = Mage::helper('checkout/cart');
+        $this->quote = $this->quoteHelper->getQuote();
         $this->config = Mage::helper('alma/config');
+
     }
 
     protected function _toHtml()
     {
         // We know that we're rendering as a widget when no template file is set yet
         if (empty($this->_template)) {
-            $this->_template = "alma/cart/eligibility.phtml";
-            $this->isWidget = true;
+            $this->_template = "alma/cart/cart-widget.phtml";
         }
 
         return parent::_toHtml();
     }
-    public function checkEligibility()
+
+    /**
+     * @return bool
+     */
+    public function widgetIsEnable()
     {
-        return $this->eligibilityHelper->checkEligibility();
+        return $this->config->showCartWidget();
     }
 
-    public function showEligibilityMessage()
-    {
-        return $this->shouldDisplay() && $this->config->showEligibilityMessage();
+    /**
+     * @return float
+     */
+    public function getFinalPrice(){
+        return Alma_Installments_Helper_Functions::priceToCents($this->quote->getGrandTotal());
     }
 
-    public function getEligibilityMessage()
+    /**
+     * @return string
+     */
+    public function getActiveMode()
     {
-        return $this->eligibilityHelper->getMessage();
+        return $this->config->getActiveMode();
     }
 
-    public function shouldDisplay() {
-        return $this->availabilityHelper->isAvailable();
+    /**
+     * @return array
+     */
+    public function getEnableFeePlansForBadge()
+    {
+        return $this->feePlansHelper->getEnableFeePlansForBadge();
+    }
+    /**
+     * @return string
+     */
+    public function getMerchantId()
+    {
+        return $this->config->getMerchantId();
+    }
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        return $this->config->getLocale();
     }
 
-    public function isWidget()
-    {
-        return $this->isWidget;
-    }
 }

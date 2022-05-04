@@ -31,7 +31,7 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_LIVE_API_KEY = 'payment/alma_installments/live_api_key';
     const CONFIG_TEST_API_KEY = 'payment/alma_installments/test_api_key';
     const CONFIG_API_MODE = 'payment/alma_installments/api_mode';
-    const CONFIG_SHOW_ELIGIBILITY_MESSAGE = 'payment/alma_installments/show_eligibility_message';
+    const WIDGET_ENABLE_CART_PAGE = 'payment/alma_installments/enable_widget_cart';
     const CONFIG_ELIGIBILITY_MESSAGE = 'payment/alma_installments/eligibility_message';
     const CONFIG_NON_ELIGIBILITY_MESSAGE = 'payment/alma_installments/non_eligibility_message';
     const CONFIG_TITLE = 'payment/alma_installments/title';
@@ -44,8 +44,12 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_PNX_MAX_AMOUNT = 'payment/alma_installments/p%dx_max_amount';
 
     const CONFIG_FULLY_CONFIGURED = 'payment/alma_installments/fully_configured';
+    const CONFIG_MERCHANT_ID = 'payment/alma_installments/merchant_id';
 
-	public function get($field, $default = null, $storeId = null)
+    const WIDGET_ENABLE_PRODUCT_PAGE =  'payment/alma_installments/enable_widget_product';
+    const WIDGET_CUSTOM_POSITION =  'payment/alma_installments/custom_widget_position';
+
+    public function get($field, $default = null, $storeId = null)
     {
         $value = Mage::getStoreConfig($field, $storeId);
 
@@ -107,9 +111,9 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return  $this->__(trim($this->get(self::CONFIG_NON_ELIGIBILITY_MESSAGE)));
     }
 
-    public function showEligibilityMessage()
+    public function widgetIsEnableInCartPage()
     {
-        return (bool)(int)$this->get(self::CONFIG_SHOW_ELIGIBILITY_MESSAGE);
+        return (bool)(int)$this->get(self::WIDGET_ENABLE_CART_PAGE);
     }
     public function getExcludedProductTypes()
     {
@@ -125,40 +129,45 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     {
         return !$this->needsAPIKeys() && (bool)(int)$this->get(self::CONFIG_FULLY_CONFIGURED, false);
     }
-
-    public function isPnXEnabled($n)
+    public function getMerchantId()
     {
-        return (bool)(int)$this->get(sprintf(self::CONFIG_PNX_ENABLED, $n), $n == 3);
+        return $this->get(self::CONFIG_MERCHANT_ID, '');
     }
-
-    public function pnxMinAmount($n, $merchant = null)
+    public function widgetIsEnableInProductPage()
     {
-        $min = $merchant ? $merchant->minimum_purchase_amount : 10000;
-        return (int)$this->get(sprintf(self::CONFIG_PNX_MIN_AMOUNT, $n), $min);
+        return $this->get(self::WIDGET_ENABLE_PRODUCT_PAGE, false);
     }
-
-    public function pnxMaxAmount($n, $merchant = null)
+    public function getWidgetCustomPosition()
     {
-        $max = $merchant ? $merchant->maximum_purchase_amount : 100000;
-        return (int)$this->get(sprintf(self::CONFIG_PNX_MAX_AMOUNT, $n), $max);
+        return $this->get(self::WIDGET_CUSTOM_POSITION, '');
+    }
+    /**
+     * @return string
+     */
+    public function getLocale()
+    {
+        $locale ='en';
+        $localeStoreCode = Mage::app()->getLocale()->getLocaleCode();
+
+        if (preg_match('/^([a-z]{2})_([A-Z]{2})$/',$localeStoreCode,$matches)){
+            $locale = $matches[1];
+        }
+        return $locale;
     }
 
-	public function enabledInstallmentsCounts()
-	{
-		$installmentsCounts = array();
-
-		/** @var Alma_Installments_Helper_Data $dataHelper */
-		$dataHelper = Mage::helper('alma/data');
-		$merchant = $dataHelper->getMerchant();
-
-		foreach ($merchant->fee_plans as $fee_plan) {
-			$n = $fee_plan['installments_count'];
-
-			if ($this->isPnXEnabled($n)) {
-				$installmentsCounts[] = $n;
-			}
-		}
-
-		return $installmentsCounts;
+    /**
+     * @return bool
+     */
+    public function showProductPageWidget()
+    {
+        return ($this->widgetIsEnableInProductPage() && $this->isActive());
     }
+    /**
+     * @return bool
+     */
+    public function showCartWidget()
+    {
+        return ($this->widgetIsEnableInCartPage() && $this->isActive());
+    }
+
 }

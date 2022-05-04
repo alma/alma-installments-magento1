@@ -33,11 +33,32 @@
             </action>
         </reference>
     </default>
+    <catalog_product_view translate="label">
+        <reference name="head">
+            <block type="core/text" name="alma_css">
+                <action method="setText">
+                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css">]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
+        <reference name="product.info.extrahint">
+            <block type="alma/ProductWidget" name="product.view.alma_badge" template="alma/product/badge.phtml" translate="label" />
+        </reference>
+    </catalog_product_view>
     <checkout_cart_index>
+        <reference name="head">
+            <block type="core/text" name="alma_css">
+                <action method="setText">
+                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css">]]>
+                    </text>
+                </action>
+            </block>
+        </reference>
         <reference name="content">
             <reference name="checkout.cart">
                 <block type="core/text_list" name="checkout.cart.extra">
-                    <block type="alma/eligibility" name="checkout.cart.alma_eligibility" template="alma/cart/eligibility.phtml"/>
+                        <block type="alma/CartWidget" name="checkout.cart.alma_eligibility" template="alma/cart/cart-widget.phtml"/>
                 </block>
             </reference>
         </reference>
