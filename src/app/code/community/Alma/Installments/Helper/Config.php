@@ -31,7 +31,7 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
     const CONFIG_LIVE_API_KEY = 'payment/alma_installments/live_api_key';
     const CONFIG_TEST_API_KEY = 'payment/alma_installments/test_api_key';
     const CONFIG_API_MODE = 'payment/alma_installments/api_mode';
-    const CONFIG_SHOW_ELIGIBILITY_MESSAGE = 'payment/alma_installments/show_eligibility_message';
+    const WIDGET_ENABLE_CART_PAGE = 'payment/alma_installments/enable_widget_cart';
     const CONFIG_ELIGIBILITY_MESSAGE = 'payment/alma_installments/eligibility_message';
     const CONFIG_NON_ELIGIBILITY_MESSAGE = 'payment/alma_installments/non_eligibility_message';
     const CONFIG_TITLE = 'payment/alma_installments/title';
@@ -111,9 +111,9 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return  $this->__(trim($this->get(self::CONFIG_NON_ELIGIBILITY_MESSAGE)));
     }
 
-    public function showEligibilityMessage()
+    public function widgetIsEnableInCartPage()
     {
-        return (bool)(int)$this->get(self::CONFIG_SHOW_ELIGIBILITY_MESSAGE);
+        return (bool)(int)$this->get(self::WIDGET_ENABLE_CART_PAGE);
     }
     public function getExcludedProductTypes()
     {
@@ -155,9 +155,19 @@ class Alma_Installments_Helper_Config extends Mage_Core_Helper_Abstract
         return $locale;
     }
 
-    public function showWidget()
+    /**
+     * @return bool
+     */
+    public function showProductPageWidget()
     {
         return ($this->widgetIsEnableInProductPage() && $this->isActive());
+    }
+    /**
+     * @return bool
+     */
+    public function showCartWidget()
+    {
+        return ($this->widgetIsEnableInCartPage() && $this->isActive());
     }
 
 }

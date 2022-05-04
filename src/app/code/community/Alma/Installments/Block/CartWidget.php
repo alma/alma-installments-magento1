@@ -44,7 +44,6 @@ class Alma_Installments_Block_CartWidget extends Mage_Core_Block_Template
         $this->quoteHelper = Mage::helper('checkout/cart');
         $this->quote = $this->quoteHelper->getQuote();
         $this->config = Mage::helper('alma/config');
-        $this->logger = Mage::helper('alma/Logger');
 
     }
 
@@ -63,7 +62,7 @@ class Alma_Installments_Block_CartWidget extends Mage_Core_Block_Template
      */
     public function widgetIsEnable()
     {
-        return $this->config->showWidget();
+        return $this->config->showCartWidget();
     }
 
     /**

@@ -53,8 +53,8 @@
                 <api_mode>test</api_mode>
 
                 <enable_widget_product>O</enable_widget_product>
+                <enable_widget_cart>0</enable_widget_cart>
 
-                <show_eligibility_message>1</show_eligibility_message>
 
                 <title>Monthly Payments with Alma</title>
                 <description>Pay in 3 monthly payments with your credit card.</description>

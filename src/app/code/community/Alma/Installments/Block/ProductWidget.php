@@ -102,7 +102,7 @@ class Alma_Installments_Block_ProductWidget extends Mage_Core_Block_Template
      */
     public function widgetIsEnable()
     {
-        return $this->config->showWidget();
+        return $this->config->showProductPageWidget();
     }
 
     /**
