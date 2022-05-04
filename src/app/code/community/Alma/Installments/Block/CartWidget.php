@@ -52,7 +52,7 @@ class Alma_Installments_Block_CartWidget extends Mage_Core_Block_Template
     {
         // We know that we're rendering as a widget when no template file is set yet
         if (empty($this->_template)) {
-            $this->_template = "alma/cart/eligibility.phtml";
+            $this->_template = "alma/cart/cart-widget.phtml";
         }
 
         return parent::_toHtml();

@@ -58,7 +58,7 @@
         <reference name="content">
             <reference name="checkout.cart">
                 <block type="core/text_list" name="checkout.cart.extra">
-                    <block type="alma/CartWidget" name="checkout.cart.alma_eligibility" template="alma/cart/eligibility.phtml"/>
+                        <block type="alma/CartWidget" name="checkout.cart.alma_eligibility" template="alma/cart/cart-widget.phtml"/>
                 </block>
             </reference>
         </reference>

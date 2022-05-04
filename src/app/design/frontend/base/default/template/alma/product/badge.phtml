@@ -50,7 +50,7 @@
         var customPositionName = '<?= $this->getWidgetCustomPosition()?>';
         if(customPositionName !== '' ){
             var customPosition = document.getElementById(customPositionName);
-            if (customPosition == null){
+            if (customPosition == null && document.getElementsByClassName(customPositionName).length > 0 ){
                 customPosition = document.getElementsByClassName(customPositionName)[0]
             }
             if (customPosition == null) {
@@ -67,7 +67,7 @@
      */
     function addListenerToQty(){
         var qtyNode = document.getElementById('qty');
-        qtyNode.addEventListener("input",function(){updateWidget()});
+        qtyNode.addEventListener("input",updateWidget);
     }
 
     /**
@@ -75,9 +75,7 @@
      */
     function addListenerToPrice(){
         var priceContainer = getHtmlPriceContainer();
-        priceContainer.on('DOMSubtreeModified', function () {
-            updateWidget();
-        });
+        priceContainer.on('DOMSubtreeModified', updateWidget);
     }
 
     /**
@@ -115,7 +113,7 @@
      */
     function getPriceFromContainer(priceContainer){
         var price = 0;
-        if(priceContainer !== undefined && priceContainer !== null && priceContainer.innerText !== undefined && priceContainer.innerText !== null)
+        if(priceContainer && 'innerText' in priceContainer && priceContainer.innerText !== null)
         {
             price = getPricePerQty(convertHtmlPriceToCent(priceContainer.innerText));
         }

@@ -37,7 +37,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
 
     private $almaClient;
     /**
-     * @var Alma_Installments_Helper_AlmaClient
+     * @var Alma_Installments_Helper_Logger
      */
     private $logger;
     /**
@@ -334,11 +334,12 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
      */
     public function getEnableFeePlansForBadge()
     {
-        $plansForBadge = $this->getEnabledFeePlansConfigFromBackOffice();
-        foreach ($plansForBadge as $panKey => $plan) {
-            $plansForBadge[$panKey] = $this->formatPlanForBadge($plan);
+        $enableFeePlansFromBackOffice = $this->getEnabledFeePlansConfigFromBackOffice();
+        $plansForBadge = [];
+        foreach ($enableFeePlansFromBackOffice as $panKey => $plan) {
+            $plansForBadge[] = $this->formatPlanForBadge($plan);
         }
-        return json_encode(array_values($plansForBadge));
+        return json_encode($plansForBadge);
     }
 
     /**
