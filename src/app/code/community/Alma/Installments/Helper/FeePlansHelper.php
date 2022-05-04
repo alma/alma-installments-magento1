@@ -336,7 +336,7 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     {
         $enableFeePlansFromBackOffice = $this->getEnabledFeePlansConfigFromBackOffice();
         $plansForBadge = [];
-        foreach ($enableFeePlansFromBackOffice as $panKey => $plan) {
+        foreach ($enableFeePlansFromBackOffice as $plan) {
             $plansForBadge[] = $this->formatPlanForBadge($plan);
         }
         return json_encode($plansForBadge);
