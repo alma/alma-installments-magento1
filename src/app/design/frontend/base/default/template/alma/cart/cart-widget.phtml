@@ -36,9 +36,7 @@
         /**
          * @description  Wait for end of Dom loading / qty is not load immediately
          */
-        window.addEventListener('DOMContentLoaded', () => {
-            updateWidget();
-        });
+        window.addEventListener('DOMContentLoaded', updateWidget);
 
         /**
          * @description  Init alma
