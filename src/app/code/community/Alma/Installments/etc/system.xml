@@ -114,7 +114,7 @@
                         <product_page_display type="group" translate="label comment">
                         <expanded>1</expanded>
                         <label>Product page display</label>
-                        <comment>A badge can be displayed on product pages to indicate eligible payments plans</comment>
+                        <comment>A widget can be displayed on product pages to indicate eligible payments plans</comment>
                         <frontend_type>text</frontend_type>
                         <sort_order>90</sort_order>
                         <show_in_default>1</show_in_default>
@@ -133,8 +133,8 @@
                             </enable_widget_product_page>
                             <widget_custom_position translate="label comment">
                                 <config_path>payment/alma_installments/custom_widget_position</config_path>
-                                <label>Badge custom position</label>
-                                <comment>Id or class name for the custom badge container. (ex: add-to-box or qty)</comment>
+                                <label>Widget custom position</label>
+                                <comment>Id or class name for the custom widget container. (ex: add-to-box or qty)</comment>
                                 <frontend_type>text</frontend_type>
                                 <sort_order>92</sort_order>
                                 <show_in_default>1</show_in_default>
@@ -148,7 +148,7 @@
                         <cart_display type="group" translate="label comment">
                             <expanded>1</expanded>
                             <label>Cart display</label>
-                            <comment>A message can be displayed in the cart and minicart to indicate the order eligibility for monthly payments</comment>
+                            <comment>A widget can be displayed in the cart to indicate the order eligibility for monthly payments</comment>
                             <frontend_type>text</frontend_type>
                             <sort_order>100</sort_order>
                             <show_in_default>1</show_in_default>
