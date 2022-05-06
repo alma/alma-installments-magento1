@@ -56,7 +56,7 @@
                 <enable_widget_cart>0</enable_widget_cart>
 
 
-                <title>Monthly Payments with Alma</title>
+                <title>Alma monthly and deferred payments</title>
                 <description>Pay in 3 monthly payments with your credit card.</description>
             </alma_installments>
         </payment>

@@ -25,7 +25,7 @@
 "You can find your API keys on <a href=""https://dashboard.getalma.eu/security"" target=""_blank"">your Alma dashboard</a>","Encontrará sus claves de API en <a href=""https://dashboard.getalma.eu/security"" target=""_blank"">el panel de control Alma</a>"
 "A widget can be displayed in the cart to indicate the order eligibility for monthly payments","Se puede mostrar un widget en el carrito para indicar la elegibilidad del pedido para los pagos mensuales"
 "Virtual and downloadable products aren't eligible","Los productos virtuales/descargables no admiten esta opción"
-"Monthly Payments with Alma","Pague en varias cuotas con Alma"
+"Alma monthly and deferred payments","Pagos mensuales y aplazados de Alma"
 "Pay in 3 monthly payments with your credit card.","Pague en 3 cuotas con su tarjeta de crédito"
 "Error while processing your order: %s","Error al tramitar su pedido: %s"
 "There was an error processing your order. Please try again later or contact us if the problem persists","Se ha producido un error al tramitar su pedido. Vuelva a intentarlo o contáctenos si el problema persiste."
