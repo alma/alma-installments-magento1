@@ -67,6 +67,9 @@ class Alma_Installments_Helper_FeePlansHelper extends Alma_Installments_Helper_C
     public function getFeePlansFromAlmaApi()
     {
         $almaFeePlans=[];
+        if (!$this->almaClient) {
+            return [];
+        }
         try {
             $almaFeePlans = $this->almaClient->merchants->feePlans();
         } catch (\Exception $e) {
