@@ -1,7 +1,7 @@
 {
     "name": "alma/alma-installments-magento1",
     "description": "Integrates Alma Monthly Installments into Magento 1",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "require": {
         "alma/alma-php-client": "*",
         "psr/log": "^1.1"

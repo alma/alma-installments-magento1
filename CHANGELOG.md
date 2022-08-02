@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.1.1
+------
+
+* Add PT Translation
+* Fix bug on first install
+
+
 v2.1.0
 ------
 
