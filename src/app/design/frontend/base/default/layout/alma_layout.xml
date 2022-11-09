@@ -37,7 +37,7 @@
         <reference name="head">
             <block type="core/text" name="alma_css">
                 <action method="setText">
-                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css">]]>
+                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css">]]>
                     </text>
                 </action>
             </block>
@@ -50,7 +50,7 @@
         <reference name="head">
             <block type="core/text" name="alma_css">
                 <action method="setText">
-                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@2.x/dist/widgets.min.css">]]>
+                    <text><![CDATA[<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@alma/widgets@3.x.x/dist/widgets.min.css">]]>
                     </text>
                 </action>
             </block>
