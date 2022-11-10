@@ -7,6 +7,12 @@
                     id="alma-p-<?php echo $feePlanKey ?>"
                     name="payment[<?= Alma_Installments_Model_PaymentMethod::ADDITIONAL_DATA_LABEL ?>]"
                     value="<?php echo $feePlanKey ?>"
+                   <?php
+                       if (!isset($first)){
+                           echo('checked');
+                       }
+                       $first = true
+                   ?>
                 >
                 <label for="alma-p-<?php echo $feePlanKey ?>">
                     <?php
