@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v3.0.0
+------
+
+* Change Alma Logo
+* Auto select first fee plan in checkout
+
+
 v2.1.1
 ------
 
