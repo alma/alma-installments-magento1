@@ -1,69 +1,96 @@
 <ul class="form-list" id="payment_form_<?php echo $this->getMethodCode() ?>" style="display:none;">
     <li>
-		<?php foreach ($this->getEligibleFeePlans() as $feePlanKey => $feePlan) { ?>
+        <?php
+        $first = false;
+        foreach ($this->getEligibleFeePlans() as $feePlanKey => $feePlan) { ?>
             <p>
                 <input
-                    type="radio"
-                    id="alma-p-<?php echo $feePlanKey ?>"
-                    name="payment[<?= Alma_Installments_Model_PaymentMethod::ADDITIONAL_DATA_LABEL ?>]"
-                    value="<?php echo $feePlanKey ?>"
+                        type="radio"
+                        id="alma-p-<?php echo $feePlanKey ?>"
+                        name="payment[<?= Alma_Installments_Model_PaymentMethod::ADDITIONAL_DATA_LABEL ?>]"
+                        value="<?php echo $feePlanKey ?>"
+                    <?php
+                    if (!$first) {
+                        echo 'checked';
+                    }
+                    $first = true
+                    ?>
                 >
                 <label for="alma-p-<?php echo $feePlanKey ?>">
                     <?php
-                        $label = $this->__("Pay in %d installments", $feePlan->getInstallmentsCount());
-                        if($feePlan->isPayLaterOnly()){
-                            $label = $this->__("Pay in %d days", $feePlan->getDeferredDays());
-                        }
-                        echo $label;
+                    $label = $this->__("Pay in %d installments", $feePlan->getInstallmentsCount());
+                    if ($feePlan->isPayLaterOnly()) {
+                        $label = $this->__("Pay in %d days", $feePlan->getDeferredDays());
+                    }
+                    echo $label;
                     ?>
                 </label>
-                <ul class="alma-installments" id="installments-<?= $feePlanKey ?>" style="display: none">
-                    <?php foreach ($feePlan->getPaymentPlan() as $paymentPlanKey => $paymentPlan) { ?>
-                        <li>
-                            <span class="alma-installment--due-date"><?= $this->timestampToLocaleDate($paymentPlan['due_date'])?></span>
-                            <span class="alma-installment--amount-column">
-                                <span class="alma-installment--amount"><?= $this->convertCentToPrice($paymentPlan['total_amount'])?></span>
-                                    <?php if ($paymentPlan['customer_fee']>0){ ?>
-                                    <span class="alma-installment--fee">
+            <ul class="alma-installments" id="installments-<?= $feePlanKey ?>" style="display: none">
+                <?php foreach ($feePlan->getPaymentPlan() as $paymentPlanKey => $paymentPlan) { ?>
+                    <li>
+                        <span class="alma-installment--due-date">
+                            <?= $this->timestampToLocaleDate($paymentPlan['due_date']) ?>
+                        </span>
+                        <span class="alma-installment--amount-column">
+                                <span class="alma-installment--amount">
+                                    <?= $this->convertCentToPrice($paymentPlan['total_amount']) ?>
+                                </span>
+                                    <?php if ($paymentPlan['customer_fee'] > 0) { ?>
+                                        <span class="alma-installment--fee">
                                             <span><?= $this->getFeeLabel($paymentPlan['customer_fee']) ?></span>
                                     </span>
                                     <?php } ?>
                             </span>
-                        </li>
-                    <?php } ?>
-                   <?php if(count($feePlan->getPaymentPlan())> 4) {?>
+                    </li>
+                <?php } ?>
+                <?php if (count($feePlan->getPaymentPlan()) > 4) { ?>
                     <li>
                         <span>
                         <span><?= __('Your cart total : ') ?></span>
                             <span class="alma-installment--cartTotal"><?= $this->getCartTotal() ?></span><br/>
-                            <span><?= __("Credit cost : ") ?></span><span><?= $this->getCreditCost($feePlan->getCustomerTotalCostAmount()) ?></span><br />
-                            <?php if($feePlan->getAnnualInterestRate()) {?>
-                            <span><?= __('Annual interest rate : ') ?></span><span><?= $this->getAnnualInterestRate($feePlan->getAnnualInterestRate())?></span><br />
+                            <span>
+                                <?= __("Credit cost : ") ?>
+                            </span>
+                            <span>
+                                <?= $this->getCreditCost($feePlan->getCustomerTotalCostAmount()) ?>
+                            </span>
+                            <br/>
+                            <?php if ($feePlan->getAnnualInterestRate()) { ?>
+                                <span><?= __('Annual interest rate : ') ?></span>
+                                <span><?= $this->getAnnualInterestRate($feePlan->getAnnualInterestRate()) ?></span><br/>
                             <?php } ?>
-                            <strong><span><?= __('Total : ')?></span><span><?= $this->getTotalPaid($feePlan->getCustomerTotalCostAmount())?></span></strong><br />
+                            <strong>
+                                <span>
+                                    <?= __('Total : ') ?>
+                                </span>
+                                <span>
+                                    <?= $this->getTotalPaid($feePlan->getCustomerTotalCostAmount()) ?>
+                                </span>
+                            </strong>
+                            <br/>
                         </span>
                     </li>
-                    <?php } ?>
-                </ul>
+                <?php } ?>
+            </ul>
             </p>
-		<?php } ?>
+        <?php } ?>
     </li>
 </ul>
 
 <script type="text/javascript">
-// <![CDATA[
-<?php foreach ($this->getEligibleFeePlans() as $feePlanKey => $feePlan) { ?>
-Event.observe('alma-p-<?php echo $feePlanKey ?>','change',switchInstallments)
-<?php } ?>
+    // <![CDATA[
+    <?php foreach ($this->getEligibleFeePlans() as $feePlanKey => $feePlan) { ?>
+    Event.observe('alma-p-<?php echo $feePlanKey ?>', 'change', switchInstallments)
+    <?php } ?>
 
-function switchInstallments(event)
-{
-    const inputs = document.querySelectorAll('.alma-installments');
-    inputs.forEach(function (element) {
-       element.style.display = 'none';
-    });
-    const currentSwitch = document.getElementById('installments-'+event.target.defaultValue)
-    currentSwitch.style.display = null;
-}
-//]]>
+    function switchInstallments(event) {
+        const inputs = document.querySelectorAll('.alma-installments');
+        inputs.forEach(function (element) {
+            element.style.display = 'none';
+        });
+        const currentSwitch = document.getElementById('installments-' + event.target.defaultValue)
+        currentSwitch.style.display = null;
+    }
+
+    //]]>
 </script>
