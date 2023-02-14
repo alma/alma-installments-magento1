@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v3.1.0
+------
+
+* Hide API key in back office
+
 v3.0.0
 ------
 
