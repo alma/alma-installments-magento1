@@ -194,8 +194,25 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
 
     public function ipnAction()
     {
+        /** @var AlmaLogger $logger */
+        $logger = Mage::helper('alma/logger')->getLogger();
+
+        /** @var Alma_Installments_Helper_Payment $paymentHelper */
+        $paymentHelper = Mage::helper('alma/Payment');
+
         $this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
         $body = Mage::helper('core')->jsonEncode(array('success' => true));
+
+        $pid = $this->getRequest()->getParam('pid');
+
+        try {
+            $paymentHelper->checkSignature($pid);
+        } catch (Alma_installments_Model_Exceptions_PaymentException $e) {
+            $logger->error('Error with signature validation :', [$e->getMessage()]);
+            $body = Mage::helper('core')->jsonEncode(array('error' => $e->getMessage()));
+            $this->getResponse()->setBody($body);
+            return;
+        }
 
         try {
             $this->validatePayment();
