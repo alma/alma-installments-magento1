@@ -27,7 +27,9 @@
 use Alma\API\Entities\Instalment;
 use Alma\API\Entities\Payment;
 
-
+/**
+ * Exception for payment validation errors
+ */
 class AlmaPaymentValidationError extends \Exception {
     /**
      * @var string
@@ -46,13 +48,26 @@ class AlmaPaymentValidationError extends \Exception {
 }
 
 
+/**
+ * Determine front controller actions for Alma payments
+ */
 class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Action
 {
+    /**
+     * Cancel an order with a message
+     *
+     * @param Mage_Sales_Model_Order $order
+     * @param string $error
+     * @return void
+     * @throws Mage_Core_Exception
+     */
     private function cancelOrder($order, $error) {
         $order->registerCancellation($error)->save();
     }
 
     /**
+     * Get checkout session model instance
+     *
      * @return Mage_Checkout_Model_Session
      */
     private function getSession()
@@ -61,8 +76,11 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
     }
 
     /**
+     * Validate payment and return redirect path
+     *
      * @return string
      * @throws AlmaPaymentValidationError
+     * @throws Mage_Core_Exception
      */
     private function validatePayment()
     {
@@ -96,7 +114,7 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
             if (Alma_Installments_Helper_Functions::priceToCents($payment->getAmountAuthorized()) !== $almaPayment->purchase_amount) {
                 $internalError = $this->__(
                     "Paid amount (%1) does not match due amount (%2) for order %3",
-                    Functions::priceFromCents($almaPayment->purchase_amount),
+                    Alma_Installments_Helper_Functions::priceFromCents($almaPayment->purchase_amount),
                     $payment->getAmountAuthorized(),
                     $order->getIncrementId()
                 );
@@ -180,6 +198,12 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
         throw new AlmaPaymentValidationError(null, 'checkout/cart');
     }
 
+    /**
+     * Customer return action method name determine url params
+     *
+     * @return Mage_Core_Controller_Varien_Action
+     * @throws Mage_Core_Exception
+     */
     public function returnAction()
     {
         try {
@@ -192,6 +216,12 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
         return $this->_redirect($redirect_to, array('_secure' => true));
     }
 
+    /**
+     * Ipn action method name determine url params
+     *
+     * @return void
+     * @throws Zend_Controller_Response_Exception
+     */
     public function ipnAction()
     {
         /** @var AlmaLogger $logger */
@@ -224,9 +254,14 @@ class Alma_Installments_PaymentController extends Mage_Core_Controller_Front_Act
         $this->getResponse()->setBody($body);
     }
 
+    /**
+     * Cancel action method name determine url params
+     *
+     * @return Alma_Installments_PaymentController
+     * @throws Mage_Core_Exception
+     */
     public function cancelAction()
     {
-        /** @var Mage_Sales_Model_Order $order */
         $order = $this->getSession()->getLastRealOrder();
         if ($order) {
             $this->cancelOrder($order, $this->__("Order canceled by customer"));

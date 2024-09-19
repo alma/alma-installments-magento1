@@ -23,6 +23,10 @@
  *
  */
 
+/**
+ * Alma_Installments_Helper_Payment
+ * Payment helper class
+ */
 class Alma_Installments_Helper_Payment extends Mage_Core_Helper_Abstract
 {
     const HEADER_SIGNATURE_KEY = 'X-Alma-Signature';
@@ -38,6 +42,8 @@ class Alma_Installments_Helper_Payment extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get header signature
+     *
      * @return string
      * @throws Alma_installments_Model_Exceptions_PaymentException
      */
@@ -58,6 +64,8 @@ class Alma_Installments_Helper_Payment extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Check signature with payment id and API key with error handling
+     *
      * @return void
      * @throws Alma_installments_Model_Exceptions_PaymentException
      */
@@ -68,6 +76,14 @@ class Alma_Installments_Helper_Payment extends Mage_Core_Helper_Abstract
         }
     }
 
+    /**
+     * Validate hmac signature
+     *
+     * @param string $almaPaymentId
+     * @param string $apiKey
+     * @param string $signature
+     * @return bool
+     */
     private function isHmacValidated($almaPaymentId, $apiKey, $signature)
     {
         return is_string($almaPaymentId) &&
@@ -76,6 +92,8 @@ class Alma_Installments_Helper_Payment extends Mage_Core_Helper_Abstract
     }
 
     /**
+     * Get Current API key in config with error handling
+     *
      * @return string
      * @throws Alma_installments_Model_Exceptions_PaymentException
      */
