@@ -1,6 +1,12 @@
 Changelog
 =========
 
+v3.2.0
+------
+
+* Add HMAC verification on IPN
+
+
 v3.1.0
 ------
 
